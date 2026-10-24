@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { initialListings, initialOrders, statusSteps } from './data';
 import { calculateOrderBreakdown, getStatusIndex } from './lib/marketplace';
-import { loadDemoState, resetDemoState, saveDemoState } from './lib/persistence';
-import { broadcastStateChange, subscribeStateSync } from './lib/sync';
+import { loadDemoState, resetDemoState } from './lib/persistence';
+import { loadInitialDatabase, subscribeToDatabase, syncDatabaseState } from './lib/db';
 
 import { PortalHeader } from './components/PortalHeader';
 import { BuyerPage } from './components/BuyerPage';
@@ -12,6 +12,7 @@ import { AdminPage } from './components/AdminPage';
 import { PresenterPage } from './components/PresenterPage';
 import { PaymentModal } from './components/PaymentModal';
 import { NewListingModal } from './components/NewListingModal';
+import { DatabaseModal } from './components/DatabaseModal';
 
 function getInitialPortal() {
   if (typeof window === 'undefined') return 'buyer';
@@ -34,17 +35,35 @@ export function App() {
   // Active modals
   const [activePayOrder, setActivePayOrder] = useState(null);
   const [showNewListingModal, setShowNewListingModal] = useState(false);
+  const [showDbModal, setShowDbModal] = useState(false);
   const [toast, setToast] = useState('');
 
-  // Persist locally & broadcast cross-tab sync
+  // 1. Initial Database Hydration (Supabase / Serverless / Local)
   useEffect(() => {
-    saveDemoState({ listings, orders });
-    broadcastStateChange({ listings, orders });
+    let isMounted = true;
+    loadInitialDatabase().then((dbData) => {
+      if (isMounted && dbData) {
+        if (dbData.listings && Array.isArray(dbData.listings) && dbData.listings.length > 0) {
+          setListings(dbData.listings);
+        }
+        if (dbData.orders && Array.isArray(dbData.orders)) {
+          setOrders(dbData.orders);
+        }
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // 2. Real-Time Multi-Device Database Sync (Supabase PostgreSQL + Serverless Cloud + Cross-Tab)
+  useEffect(() => {
+    syncDatabaseState({ listings, orders });
   }, [listings, orders]);
 
-  // Subscribe to updates from other open windows/tabs during live presentations
+  // 3. Subscribe to Real-Time Updates from Database & Other Participant Devices
   useEffect(() => {
-    const unsubscribe = subscribeStateSync((incoming) => {
+    const unsubscribe = subscribeToDatabase((incoming) => {
       if (incoming.listings && Array.isArray(incoming.listings)) {
         setListings(incoming.listings);
       }
@@ -249,6 +268,7 @@ export function App() {
         pendingRequestsCount={pendingRequestsCount}
         availablePickupsCount={availablePickupsCount}
         pendingBuyerPaymentsCount={pendingBuyerPaymentsCount}
+        onOpenDbModal={() => setShowDbModal(true)}
       />
 
       {/* Main Portal View Router */}
@@ -327,6 +347,22 @@ export function App() {
         <NewListingModal
           onClose={() => setShowNewListingModal(false)}
           onAddListing={handleAddListing}
+        />
+      )}
+
+      {/* Real-Time Database & Cloud Sync Modal */}
+      {showDbModal && (
+        <DatabaseModal
+          onClose={() => setShowDbModal(false)}
+          onConfigSaved={() => {
+            loadInitialDatabase().then((dbData) => {
+              if (dbData?.listings) setListings(dbData.listings);
+              if (dbData?.orders) setOrders(dbData.orders);
+            });
+            notify('Database reconnected and reloaded!');
+          }}
+          listingsCount={listings.length}
+          ordersCount={orders.length}
         />
       )}
 

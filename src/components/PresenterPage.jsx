@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from '../lib/i18n';
 
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
@@ -15,6 +16,7 @@ export function PresenterPage({
   onSwitchPortal,
   onGenerateQuickDemoOrder,
 }) {
+  const { t } = useTranslation();
   const [selectedQuickListing, setSelectedQuickListing] = useState(listings[0]?.id || '');
   const [mobileActiveQuad, setMobileActiveQuad] = useState('all'); // 'all' | 'buyer' | 'seller' | 'agent' | 'admin'
 
@@ -39,20 +41,18 @@ export function PresenterPage({
         <div className="presenter-banner-left">
           <div className="live-demo-badge">
             <span className="live-pulse" />
-            <span>LIVE 4-PERSONA COLLABORATIVE STAGE</span>
+            <span>{t('presenterLiveDemo')}</span>
           </div>
           <h1>
-            Full Circular Lifecycle <span className="gradient-text">Live Demonstration</span>
+            {t('presenterTitle')} <span className="gradient-text">{t('liveDemoHighlight', 'Live Demonstration')}</span>
           </h1>
-          <p>
-            Watch all 4 participant interfaces on one screen. Actions in any quadrant immediately trigger live updates across the whole network.
-          </p>
+          <p>{t('presenterSub')}</p>
         </div>
 
         <div className="presenter-banner-right">
           <button className="button button-primary quick-sim-btn glass-btn" onClick={onGenerateQuickDemoOrder}>
             <span className="btn-glow" />
-            <span>⚡ Generate Test Buy Request</span>
+            <span>{t('generateDemoRequest')}</span>
           </button>
         </div>
       </div>
@@ -62,76 +62,76 @@ export function PresenterPage({
         <div className={`flow-ribbon-step ${pendingRequests.length > 0 ? 'active-pulse' : ''}`}>
           <div className="step-badge-wrap">
             <span className="step-num">01</span>
-            <span className="step-role buyer">🛒 Buyer</span>
+            <span className="step-role buyer">🛒 {t('buyer')}</span>
           </div>
-          <strong>Send Buy Request</strong>
-          <small>{pendingRequests.length} pending acceptance</small>
+          <strong>{t('step1Ribbon')}</strong>
+          <small>{pendingRequests.length} pending</small>
         </div>
         <div className="ribbon-arrow">➔</div>
 
         <div className={`flow-ribbon-step ${awaitingPayment.length > 0 ? 'active-pulse' : ''}`}>
           <div className="step-badge-wrap">
             <span className="step-num">02</span>
-            <span className="step-role seller">📦 Seller</span>
+            <span className="step-role seller">📦 {t('seller')}</span>
           </div>
-          <strong>Accept Request</strong>
-          <small>{awaitingPayment.length} ready for payment</small>
+          <strong>{t('step2Ribbon')}</strong>
+          <small>{awaitingPayment.length} ready</small>
         </div>
         <div className="ribbon-arrow">➔</div>
 
         <div className={`flow-ribbon-step ${readyForPickup.length > 0 ? 'active-pulse' : ''}`}>
           <div className="step-badge-wrap">
             <span className="step-num">03</span>
-            <span className="step-role buyer">💳 Buyer</span>
+            <span className="step-role buyer">💳 {t('buyer')}</span>
           </div>
-          <strong>Pay Now (Escrow)</strong>
-          <small>{readyForPickup.length} paid · dispatch ready</small>
+          <strong>{t('step3Ribbon')}</strong>
+          <small>{readyForPickup.length} paid</small>
         </div>
         <div className="ribbon-arrow">➔</div>
 
         <div className={`flow-ribbon-step ${inTransit.length > 0 || delivered.length > 0 ? 'active-pulse' : ''}`}>
           <div className="step-badge-wrap">
             <span className="step-num">04</span>
-            <span className="step-role agent">🚚 Fleet</span>
+            <span className="step-role agent">🚚 {t('fleet')}</span>
           </div>
-          <strong>Pickup & Deliver</strong>
-          <small>{inTransit.length + delivered.length} in transit / drop</small>
+          <strong>{t('step4Ribbon')}</strong>
+          <small>{inTransit.length + delivered.length} active</small>
         </div>
       </div>
 
       {/* Mobile-only Quadrant Tab Segment */}
       <div className="presenter-mobile-tabs">
-        <span className="mobile-tabs-label">Focus View:</span>
+        <span className="mobile-tabs-label">{t('focusView')}</span>
         <div className="mobile-tabs-pill-row">
           <button
             className={`m-tab-pill ${mobileActiveQuad === 'all' ? 'active' : ''}`}
             onClick={() => setMobileActiveQuad('all')}
           >
-            All 4
+            {t('all')}
           </button>
           <button
             className={`m-tab-pill ${mobileActiveQuad === 'buyer' ? 'active' : ''}`}
             onClick={() => setMobileActiveQuad('buyer')}
           >
-            🛒 Buyer
+            🛒 {t('buyer')}
           </button>
           <button
             className={`m-tab-pill ${mobileActiveQuad === 'seller' ? 'active' : ''}`}
             onClick={() => setMobileActiveQuad('seller')}
           >
-            📦 Seller {pendingRequests.length > 0 && `(${pendingRequests.length})`}
+            📦 {t('seller')} {pendingRequests.length > 0 && `(${pendingRequests.length})`}
           </button>
           <button
             className={`m-tab-pill ${mobileActiveQuad === 'agent' ? 'active' : ''}`}
             onClick={() => setMobileActiveQuad('agent')}
           >
-            🚚 Fleet {readyForPickup.length > 0 && `(${readyForPickup.length})`}
+            🚚 {t('fleet')} {readyForPickup.length > 0 && `(${readyForPickup.length})`}
           </button>
           <button
             className={`m-tab-pill ${mobileActiveQuad === 'admin' ? 'active' : ''}`}
             onClick={() => setMobileActiveQuad('admin')}
           >
-            ⚙️ Ops
+            ⚙️ {t('ops')}
           </button>
         </div>
       </div>

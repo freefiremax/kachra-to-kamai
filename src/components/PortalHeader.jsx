@@ -1,4 +1,5 @@
 import { runtime } from '../lib/runtime';
+import { languages, useTranslation } from '../lib/i18n';
 
 export function PortalHeader({
   activePortal,
@@ -6,7 +7,10 @@ export function PortalHeader({
   pendingRequestsCount,
   availablePickupsCount,
   pendingBuyerPaymentsCount,
+  onOpenDbModal,
 }) {
+  const { lang, setLang, t } = useTranslation();
+
   return (
     <>
       {/* Top Glassmorphic Navigation Bar */}
@@ -26,14 +30,42 @@ export function PortalHeader({
               <span className="brand-title">
                 Kachra<span className="brand-accent">To</span>Kamai
               </span>
-              <span className="brand-subtitle">Waste se value · Value se kamai</span>
+              <span className="brand-subtitle">{t('tagline')}</span>
             </div>
           </button>
 
           <div className="hub-badge" title="Active Pilot Cluster">
             <span className="dot dot-live" />
-            <span className="hub-text">{runtime.region}</span>
+            <span className="hub-text">{t('region')}</span>
           </div>
+
+          {/* Database & Cloud Sync Status Button */}
+          <button
+            type="button"
+            className="db-badge glass-pill"
+            onClick={onOpenDbModal}
+            title="Database & Real-time Cloud Sync Status"
+          >
+            <span className="dot dot-db" />
+            <span className="db-badge-text">DB Sync</span>
+          </button>
+        </div>
+
+        {/* Interactive Language Switcher Pill */}
+        <div className="lang-switcher glass-pills" role="radiogroup" aria-label="Select Language">
+          {languages.map((item) => (
+            <button
+              key={item.code}
+              type="button"
+              className={`lang-btn ${lang === item.code ? 'active' : ''}`}
+              onClick={() => setLang(item.code)}
+              title={item.label}
+              aria-checked={lang === item.code}
+            >
+              <span className="lang-text-full">{item.label}</span>
+              <span className="lang-text-short">{item.short}</span>
+            </button>
+          ))}
         </div>
 
         {/* Desktop / Tablet Portal Switcher Segment */}
@@ -43,9 +75,9 @@ export function PortalHeader({
             onClick={() => onSelectPortal('buyer')}
           >
             <span className="p-icon">🛒</span>
-            <span className="p-label">Buyer</span>
+            <span className="p-label">{t('buyer')}</span>
             {pendingBuyerPaymentsCount > 0 && (
-              <span className="p-alert-badge urgent">{pendingBuyerPaymentsCount} Pay</span>
+              <span className="p-alert-badge urgent">{pendingBuyerPaymentsCount} {t('toPay')}</span>
             )}
           </button>
 
@@ -54,7 +86,7 @@ export function PortalHeader({
             onClick={() => onSelectPortal('seller')}
           >
             <span className="p-icon">📦</span>
-            <span className="p-label">Seller</span>
+            <span className="p-label">{t('seller')}</span>
             {pendingRequestsCount > 0 && (
               <span className="p-alert-badge">{pendingRequestsCount}</span>
             )}
@@ -65,7 +97,7 @@ export function PortalHeader({
             onClick={() => onSelectPortal('agent')}
           >
             <span className="p-icon">🚚</span>
-            <span className="p-label">Fleet</span>
+            <span className="p-label">{t('fleet')}</span>
             {availablePickupsCount > 0 && (
               <span className="p-alert-badge agent-badge">{availablePickupsCount}</span>
             )}
@@ -76,7 +108,7 @@ export function PortalHeader({
             onClick={() => onSelectPortal('admin')}
           >
             <span className="p-icon">⚙️</span>
-            <span className="p-label">Ops</span>
+            <span className="p-label">{t('ops')}</span>
           </button>
 
           <div className="nav-divider" />
@@ -87,7 +119,7 @@ export function PortalHeader({
             title="4-in-1 Live Simultaneous Stage"
           >
             <span className="p-icon">🎭</span>
-            <span className="p-label">4-in-1 Stage</span>
+            <span className="p-label">{t('stage4in1')}</span>
             <span className="live-sparkle" />
           </button>
         </nav>
@@ -105,7 +137,7 @@ export function PortalHeader({
               <span className="dock-dot urgent" />
             )}
           </div>
-          <span className="dock-label">Buyer</span>
+          <span className="dock-label">{t('buyer')}</span>
         </button>
 
         <button
@@ -118,7 +150,7 @@ export function PortalHeader({
               <span className="dock-badge">{pendingRequestsCount}</span>
             )}
           </div>
-          <span className="dock-label">Seller</span>
+          <span className="dock-label">{t('seller')}</span>
         </button>
 
         <button
@@ -131,7 +163,7 @@ export function PortalHeader({
               <span className="dock-badge agent">{availablePickupsCount}</span>
             )}
           </div>
-          <span className="dock-label">Fleet</span>
+          <span className="dock-label">{t('fleet')}</span>
         </button>
 
         <button
@@ -141,7 +173,7 @@ export function PortalHeader({
           <div className="dock-icon-wrap">
             <span className="dock-icon">⚙️</span>
           </div>
-          <span className="dock-label">Ops</span>
+          <span className="dock-label">{t('ops')}</span>
         </button>
 
         <button
@@ -152,7 +184,7 @@ export function PortalHeader({
             <span className="dock-icon">🎭</span>
             <span className="dock-sparkle" />
           </div>
-          <span className="dock-label">4-in-1</span>
+          <span className="dock-label">{t('stage4in1')}</span>
         </button>
       </nav>
     </>

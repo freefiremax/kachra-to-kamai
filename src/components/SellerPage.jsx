@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { categoryRules } from '../data';
+import { useTranslation } from '../lib/i18n';
 
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
@@ -11,6 +12,7 @@ export function SellerPage({
   onOpenNewListingModal,
   onViewBuyerPortal,
 }) {
+  const { t } = useTranslation();
   const [filterTab, setFilterTab] = useState('requests'); // 'requests' | 'inventory' | 'history'
 
   const pendingRequests = orders.filter((o) => o.status === 'requested');
@@ -28,30 +30,28 @@ export function SellerPage({
         <div className="portal-banner-content">
           <div className="portal-tag">
             <span className="portal-dot orange" />
-            <span>SELLER & SUPPLIER PORTAL · VIKRETA DASHBOARD</span>
+            <span>{t('sellerTag')}</span>
           </div>
           <h1>
-            Monetize industrial scrap & <span className="gradient-text-amber">convert waste into Kamai</span>
+            {t('sellerPortalTitle')} <span className="gradient-text-amber">{t('convertWasteIntoKamai', 'convert waste into Kamai')}</span>
           </h1>
-          <p>
-            Receive direct purchase requests from local buyers in Kopargaon, approve consignments in 1-tap, and get verified bank payouts upon pickup.
-          </p>
+          <p>{t('sellerPortalSub')}</p>
           <div className="portal-metrics-row">
             <div className={`p-metric glass-panel ${pendingRequests.length > 0 ? 'urgent-metric pulse-subtle' : ''}`}>
               <strong>{pendingRequests.length}</strong>
-              <span>New Requests to Accept</span>
+              <span>{t('newRequestsToAccept')}</span>
             </div>
             <div className="p-metric glass-panel">
               <strong>{activeOrders.length}</strong>
-              <span>Orders In Pipeline</span>
+              <span>{t('ordersInPipeline')}</span>
             </div>
             <div className="p-metric glass-panel highlight-metric">
               <strong className="gradient-text-amber">{money.format(totalKamaiEarned)}</strong>
-              <span>Net Seller Kamai</span>
+              <span>{t('netSellerKamai')}</span>
             </div>
             <div className="p-metric glass-panel">
               <strong>{listings.length}</strong>
-              <span>Active Listings</span>
+              <span>{t('activeListings')}</span>
             </div>
           </div>
         </div>
@@ -64,9 +64,9 @@ export function SellerPage({
               onClick={() => setFilterTab('requests')}
             >
               <span className="btn-icon">📩</span>
-              <span>Incoming Requests</span>
+              <span>{t('incomingRequests')}</span>
               {pendingRequests.length > 0 ? (
-                <span className="badge-pill urgent-pulse">{pendingRequests.length} Pending</span>
+                <span className="badge-pill urgent-pulse">{pendingRequests.length}</span>
               ) : (
                 <span className="badge-pill">0</span>
               )}
@@ -76,7 +76,7 @@ export function SellerPage({
               onClick={() => setFilterTab('inventory')}
             >
               <span className="btn-icon">📋</span>
-              <span>My Inventory</span>
+              <span>{t('myInventory')}</span>
               <span className="badge-pill">{listings.length}</span>
             </button>
             <button
@@ -84,13 +84,13 @@ export function SellerPage({
               onClick={() => setFilterTab('history')}
             >
               <span className="btn-icon">🚚</span>
-              <span>Pipeline & Payouts</span>
+              <span>{t('pipelinePayouts')}</span>
               <span className="badge-pill">{activeOrders.length + completedOrders.length}</span>
             </button>
           </div>
 
           <button className="button button-primary new-listing-cta glow-amber" onClick={onOpenNewListingModal}>
-            <span>+ List New Scrap</span>
+            <span>{t('listNewScrap')}</span>
           </button>
         </div>
       </section>
@@ -139,17 +139,17 @@ export function SellerPage({
                       <h3>{order.listingTitle}</h3>
                       <div className="req-meta-grid">
                         <div className="meta-box glass-panel">
-                          <small>Buyer Profile</small>
+                          <small>{t('buyerProfile')}</small>
                           <strong>{order.buyer || 'Verified Buyer'}</strong>
                           <span>📍 {order.destination}</span>
                         </div>
                         <div className="meta-box glass-panel">
-                          <small>Requested Volume</small>
+                          <small>{t('requestedVolume')}</small>
                           <strong className="qty-highlight">{order.quantity} {order.unit}</strong>
-                          <span>Distance: {order.distanceKm} km</span>
+                          <span>{t('distance')}: {order.distanceKm} km</span>
                         </div>
                         <div className="meta-box kamai-box glass-panel">
-                          <small>Net Payout to You</small>
+                          <small>{t('netPayoutToYou')}</small>
                           <strong className="kamai-num gradient-text-emerald">{money.format(sellerPayout)}</strong>
                           <span>Gross: {money.format(order.itemTotal)} (-5% comm.)</span>
                         </div>
@@ -162,14 +162,14 @@ export function SellerPage({
                         onClick={() => onAcceptRequest(order.id)}
                       >
                         <span className="check-icon">✓</span>
-                        <span>Accept Request & Alert Buyer</span>
+                        <span>{t('acceptAndAlert')}</span>
                         <span className="arr">➔</span>
                       </button>
                       <button
                         className="button button-ghost decline-btn glass-btn"
                         onClick={() => onDeclineRequest(order.id)}
                       >
-                        Decline
+                        {t('decline')}
                       </button>
                     </div>
 

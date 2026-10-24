@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { statusSteps } from '../data';
 import { getStatusIndex } from '../lib/marketplace';
+import { useTranslation } from '../lib/i18n';
 
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
@@ -12,6 +13,7 @@ export function AdminPage({
   onGenerateQuickDemoOrder,
   onOpenPortal,
 }) {
+  const { t } = useTranslation();
   const [filterStage, setFilterStage] = useState('all');
 
   // Compute Platform Metrics
@@ -49,10 +51,10 @@ export function AdminPage({
         <div className="portal-banner-content">
           <div className="portal-tag">
             <span className="portal-dot purple" />
-            <span>OPERATIONS & ECOSYSTEM TELEMETRY</span>
+            <span>{t('opsTag')}</span>
           </div>
           <h1>
-            Kopargaon Circular Economy <span className="gradient-text-purple">Command Cockpit</span>
+            {t('opsPortalTitle')} <span className="gradient-text-purple">{t('commandCockpit')}</span>
           </h1>
           <p>
             Monitor real-time material flows across all four participant types: Buyers, Sellers, Delivery Saarthi Agents, and Regulatory Safety standards.
@@ -61,23 +63,23 @@ export function AdminPage({
           <div className="portal-metrics-row admin-metrics-grid">
             <div className="p-metric glass-panel">
               <strong>{metrics.totalOrders}</strong>
-              <span>Transactions</span>
+              <span>{t('transactionsCount')}</span>
             </div>
             <div className="p-metric glass-panel">
               <strong className="gradient-text-emerald">{metrics.totalVolumeKg} kg</strong>
-              <span>Waste Diverted</span>
+              <span>{t('wasteDiverted')}</span>
             </div>
             <div className="p-metric glass-panel">
               <strong>{money.format(metrics.totalGMV)}</strong>
-              <span>Platform GMV</span>
+              <span>{t('platformGMV')}</span>
             </div>
             <div className="p-metric glass-panel highlight-metric">
               <strong className="gradient-text-purple">{money.format(metrics.totalCommission)}</strong>
-              <span>5% Escrow Commission</span>
+              <span>{t('escrowCommission')}</span>
             </div>
             <div className="p-metric glass-panel">
               <strong className="text-emerald">~{metrics.co2SavedKg} kg</strong>
-              <span>CO₂ Avoidance</span>
+              <span>{t('co2Avoidance')}</span>
             </div>
           </div>
         </div>
@@ -86,10 +88,10 @@ export function AdminPage({
         <div className="admin-demo-toolbar glass-panel">
           <span className="toolbar-label">DEMO TELEMETRY CONTROLS:</span>
           <button className="button button-primary small glow-purple" onClick={onGenerateQuickDemoOrder}>
-            <span>⚡ Generate Test Buy Request</span>
+            <span>{t('generateDemoRequest')}</span>
           </button>
           <button className="button button-ghost small glass-btn" onClick={onResetData}>
-            <span>↺ Reset Demo State</span>
+            <span>{t('resetDemo')}</span>
           </button>
         </div>
       </section>
@@ -98,7 +100,7 @@ export function AdminPage({
       <section className="admin-pipeline-section">
         <div className="section-header-box">
           <div>
-            <h2>Real-Time 5-Stage Transaction Flow</h2>
+            <h2>{t('transactionFlowTitle')}</h2>
             <p>Live visibility across every state from initial buy request to confirmed receipt.</p>
           </div>
         </div>
@@ -136,7 +138,7 @@ export function AdminPage({
                             onClick={() => onFastForwardOrder(order.id)}
                             title="Advance to next step for presentation demo"
                           >
-                            <span>Fast-Forward ➔</span>
+                            <span>{t('fastForward')}</span>
                           </button>
                         </div>
                       </div>
@@ -153,7 +155,7 @@ export function AdminPage({
       <section className="admin-ledger-section">
         <div className="section-header-box">
           <div>
-            <h2>All System Orders & Consignments</h2>
+            <h2>{t('orderLedgerTitle')}</h2>
             <p>Complete transparent ledger of marketplace activity.</p>
           </div>
           <div className="filter-pill-group">
@@ -161,7 +163,7 @@ export function AdminPage({
               className={`pill-btn glass-pill ${filterStage === 'all' ? 'active' : ''}`}
               onClick={() => setFilterStage('all')}
             >
-              All ({orders.length})
+              {t('all')} ({orders.length})
             </button>
             <button
               className={`pill-btn glass-pill ${filterStage === 'requested' ? 'active' : ''}`}

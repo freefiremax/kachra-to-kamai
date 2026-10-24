@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useTranslation } from '../lib/i18n';
 
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
 export function PaymentModal({ order, onClose, onSuccess }) {
+  const { t } = useTranslation();
   const [method, setMethod] = useState('upi');
   const [processing, setProcessing] = useState(false);
   const [completed, setCompleted] = useState(false);
@@ -39,8 +41,8 @@ export function PaymentModal({ order, onClose, onSuccess }) {
               <span>✓</span>
               <div className="pulse-ring" />
             </div>
-            <h2>Payment Verified!</h2>
-            <p className="success-amount">{money.format(totalAmount)} Secured in Escrow</p>
+            <h2>{t('paymentVerified')}</h2>
+            <p className="success-amount">{money.format(totalAmount)} {t('securedInEscrow')}</p>
             <div className="success-meta glass-panel">
               <div className="s-meta-row">
                 <span>Transaction Ref:</span>
@@ -60,14 +62,14 @@ export function PaymentModal({ order, onClose, onSuccess }) {
             <div className="payment-header">
               <div className="payment-shield">
                 <span className="shield-icon">🛡️</span>
-                <span>K2K SECURE ESCROW PROTOCOL</span>
+                <span>{t('escrowProtocol')}</span>
               </div>
-              <h2 id="pay-dialog-title">Instant Payment</h2>
+              <h2 id="pay-dialog-title">{t('instantPayment')}</h2>
               <p className="payment-subtitle">{order.listingTitle} ({order.quantity} {order.unit})</p>
             </div>
 
             <div className="payment-amount-hero glass-panel">
-              <span className="amount-label">Total Payable</span>
+              <span className="amount-label">{t('totalPayable')}</span>
               <strong className="amount-val gradient-num">{money.format(totalAmount)}</strong>
               <small className="amount-breakdown">
                 Material: {money.format(order.itemTotal)} + Transit: {money.format(order.deliveryFee)}
@@ -81,7 +83,7 @@ export function PaymentModal({ order, onClose, onSuccess }) {
                 onClick={() => setMethod('upi')}
               >
                 <span className="tab-icon">⚡</span>
-                <span>UPI / QR</span>
+                <span>{t('upiTab')}</span>
               </button>
               <button
                 type="button"
@@ -89,7 +91,7 @@ export function PaymentModal({ order, onClose, onSuccess }) {
                 onClick={() => setMethod('card')}
               >
                 <span className="tab-icon">💳</span>
-                <span>Card</span>
+                <span>{t('cardTab')}</span>
               </button>
               <button
                 type="button"
@@ -97,7 +99,7 @@ export function PaymentModal({ order, onClose, onSuccess }) {
                 onClick={() => setMethod('cod')}
               >
                 <span className="tab-icon">🤝</span>
-                <span>On Dispatch</span>
+                <span>{t('codTab')}</span>
               </button>
             </div>
 
@@ -107,7 +109,7 @@ export function PaymentModal({ order, onClose, onSuccess }) {
                   <div className="qr-box">
                     <span className="qr-glyph">▣</span>
                     <div className="qr-scanner-line" />
-                    <span className="qr-tag">SCAN VIA ANY UPI APP</span>
+                    <span className="qr-tag">{t('scanViaUpi')}</span>
                   </div>
                   <div className="upi-app-badges">
                     <span className="app-badge gpay">Google Pay</span>
@@ -161,7 +163,7 @@ export function PaymentModal({ order, onClose, onSuccess }) {
                   </span>
                 ) : (
                   <>
-                    <span>Pay {money.format(totalAmount)} Instantly</span>
+                    <span>{t('payInstantly')} · {money.format(totalAmount)}</span>
                     <span className="arrow">➔</span>
                   </>
                 )}
@@ -172,7 +174,7 @@ export function PaymentModal({ order, onClose, onSuccess }) {
             </div>
 
             <p className="payment-guarantee">
-              🛡️ Protected by <strong>Kachra To Kamai Escrow</strong>. Seller gets settlement only after delivery.
+              🛡️ {t('escrowGuaranteeText')}
             </p>
           </div>
         )}

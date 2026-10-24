@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { categoryRules, statusSteps } from '../data';
 import { calculateOrderBreakdown } from '../lib/marketplace';
+import { useTranslation } from '../lib/i18n';
 
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
@@ -12,6 +13,7 @@ export function BuyerPage({
   onConfirmReceipt,
   onViewSellerPortal,
 }) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('browse'); // 'browse' | 'orders'
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [search, setSearch] = useState('');
@@ -53,27 +55,25 @@ export function BuyerPage({
         <div className="portal-banner-content">
           <div className="portal-tag">
             <span className="portal-dot green" />
-            <span>BUYER PORTAL · KHAREEDDAR HUB</span>
+            <span>{t('buyerTag')}</span>
           </div>
           <h1>
-            Source verified scrap, surplus & <span className="gradient-text-emerald">circular materials</span>
+            {t('buyerPortalTitle')} <span className="gradient-text-emerald">{t('allMaterials')}</span>
           </h1>
-          <p>
-            Browse verified local batches in Kopargaon, submit purchase requests directly to sellers, pay securely via escrow, and track direct doorstep delivery.
-          </p>
+          <p>{t('buyerPortalSub')}</p>
           <div className="portal-metrics-row">
             <div className="p-metric glass-panel">
               <strong>{listings.length}</strong>
-              <span>Active Batches</span>
+              <span>{t('activeBatches')}</span>
             </div>
             <div className="p-metric glass-panel">
               <strong>{orders.length}</strong>
-              <span>My Orders</span>
+              <span>{t('myOrdersCount')}</span>
             </div>
             {pendingPaymentOrders.length > 0 && (
               <div className="p-metric highlight-metric glass-panel pulse-subtle" onClick={() => setActiveTab('orders')}>
                 <strong>⚡ {pendingPaymentOrders.length}</strong>
-                <span>Payment Awaiting Action!</span>
+                <span>{t('paymentAwaitingAction')}</span>
               </div>
             )}
           </div>
@@ -86,7 +86,7 @@ export function BuyerPage({
             onClick={() => setActiveTab('browse')}
           >
             <span className="btn-icon">🔍</span>
-            <span>Browse Materials</span>
+            <span>{t('browseMaterials')}</span>
             <span className="badge-pill">{listings.length}</span>
           </button>
           <button
@@ -94,9 +94,9 @@ export function BuyerPage({
             onClick={() => setActiveTab('orders')}
           >
             <span className="btn-icon">📦</span>
-            <span>My Purchases</span>
+            <span>{t('myPurchases')}</span>
             {pendingPaymentOrders.length > 0 ? (
-              <span className="badge-pill urgent-pulse">{pendingPaymentOrders.length} to Pay</span>
+              <span className="badge-pill urgent-pulse">{pendingPaymentOrders.length} {t('toPay')}</span>
             ) : (
               <span className="badge-pill">{orders.length}</span>
             )}
@@ -115,7 +115,7 @@ export function BuyerPage({
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search cotton stalks, cardboard, plastic crates, scrap..."
+                placeholder={t('searchPlaceholder')}
                 className="portal-search-input"
               />
               {search && (
@@ -128,7 +128,7 @@ export function BuyerPage({
                 className={`cat-pill glass-pill ${selectedCategory === 'all' ? 'active' : ''}`}
                 onClick={() => setSelectedCategory('all')}
               >
-                All Materials
+                {t('allMaterials')}
               </button>
               {Object.entries(categoryRules)
                 .filter(([, cat]) => !cat.blocked)
@@ -359,26 +359,26 @@ export function BuyerPage({
                 <p className="modal-desc">{modalListing.description}</p>
                 <div className="detail-grid">
                   <div className="detail-item glass-panel">
-                    <small>Available Stock</small>
+                    <small>{t('availableStock')}</small>
                     <strong>{modalListing.quantity} {modalListing.unit}</strong>
                   </div>
                   <div className="detail-item glass-panel">
-                    <small>Unit Rate</small>
+                    <small>{t('unitRate')}</small>
                     <strong>{money.format(modalListing.price)} / {modalListing.unit}</strong>
                   </div>
                   <div className="detail-item glass-panel">
-                    <small>Pickup Area</small>
+                    <small>{t('pickupHub')}</small>
                     <strong>{modalListing.area}</strong>
                   </div>
                   <div className="detail-item glass-panel">
-                    <small>Distance</small>
+                    <small>{t('distance')}</small>
                     <strong>{modalListing.distanceKm} km</strong>
                   </div>
                 </div>
 
                 <form onSubmit={handleSendRequest} className="request-form">
                   <label className="field-group">
-                    <span className="field-label">Quantity to Request ({modalListing.unit})</span>
+                    <span className="field-label">{t('qtyToRequest')} ({modalListing.unit})</span>
                     <input
                       type="number"
                       min="1"
@@ -402,15 +402,15 @@ export function BuyerPage({
                     return (
                       <div className="breakdown glass-panel">
                         <div className="breakdown-row">
-                          <span>Material Subtotal</span>
+                          <span>{t('subtotal')}</span>
                           <strong>{money.format(bd.itemTotal)}</strong>
                         </div>
                         <div className="breakdown-row">
-                          <span>Doorstep Delivery ({modalListing.distanceKm} km)</span>
+                          <span>{t('doorstepDelivery')} ({modalListing.distanceKm} km)</span>
                           <strong>{money.format(bd.deliveryFee)}</strong>
                         </div>
                         <div className="breakdown-total">
-                          <span>Estimated Total</span>
+                          <span>{t('estimatedTotal')}</span>
                           <strong>{money.format(bd.buyerTotal)}</strong>
                         </div>
                       </div>
@@ -419,12 +419,12 @@ export function BuyerPage({
 
                   <div className="modal-actions-bar">
                     <button type="submit" className="button button-primary full-width glow-green">
-                      <span>Send Buy Request to Seller</span>
+                      <span>{t('sendBuyRequest')}</span>
                       <span>➔</span>
                     </button>
                   </div>
                   <small className="form-help-text">
-                    Seller must review & accept before payment is requested.
+                    {t('sellerMustReview')}
                   </small>
                 </form>
               </div>

@@ -11,6 +11,7 @@
     "check": "npm test && npm run build"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@vitejs/plugin-react": "latest",
     "autoprefixer": "latest",

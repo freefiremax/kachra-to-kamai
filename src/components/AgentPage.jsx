@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from '../lib/i18n';
 
 const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
@@ -9,6 +10,7 @@ export function AgentPage({
   onDeliver,
   onViewBuyerPortal,
 }) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('available'); // 'available' | 'active' | 'completed'
 
   const availableOrders = orders.filter((o) => o.status === 'payment_simulated');
@@ -31,30 +33,28 @@ export function AgentPage({
         <div className="portal-banner-content">
           <div className="portal-tag">
             <span className="portal-dot blue" />
-            <span>DELIVERY FLEET PORTAL · SAARTHI RIDER HUB</span>
+            <span>{t('fleetTag')}</span>
           </div>
           <h1>
-            Point-to-point material <span className="gradient-text-blue">transit & logistics network</span>
+            {t('fleetPortalTitle')} <span className="gradient-text-blue">{t('transitAndLogistics', 'transit & logistics network')}</span>
           </h1>
-          <p>
-            Pick up verified industrial batches and crop residues from sellers in Kopargaon, navigate optimized direct routes, and earn per-trip payouts.
-          </p>
+          <p>{t('fleetPortalSub')}</p>
           <div className="portal-metrics-row">
             <div className={`p-metric glass-panel ${availableOrders.length > 0 ? 'urgent-metric pulse-subtle' : ''}`}>
               <strong>{availableOrders.length}</strong>
-              <span>Available Pickups</span>
+              <span>{t('availablePickups')}</span>
             </div>
             <div className="p-metric glass-panel">
               <strong>{inProgressOrders.length}</strong>
-              <span>Active Runs</span>
+              <span>{t('activeRuns')}</span>
             </div>
             <div className="p-metric glass-panel highlight-metric">
               <strong className="gradient-text-blue">{money.format(totalAgentEarnings)}</strong>
-              <span>Trip Payouts</span>
+              <span>{t('tripPayouts')}</span>
             </div>
             <div className="p-metric glass-panel">
               <strong>{completedOrders.length}</strong>
-              <span>Delivered Loads</span>
+              <span>{t('deliveredLoads')}</span>
             </div>
           </div>
         </div>
@@ -66,9 +66,9 @@ export function AgentPage({
             onClick={() => setActiveTab('available')}
           >
             <span className="btn-icon">⚡</span>
-            <span>Available for Pickup</span>
+            <span>{t('availableForPickup')}</span>
             {availableOrders.length > 0 ? (
-              <span className="badge-pill urgent-pulse">{availableOrders.length} New</span>
+              <span className="badge-pill urgent-pulse">{availableOrders.length}</span>
             ) : (
               <span className="badge-pill">0</span>
             )}
@@ -78,7 +78,7 @@ export function AgentPage({
             onClick={() => setActiveTab('active')}
           >
             <span className="btn-icon">🚚</span>
-            <span>Active Deliveries</span>
+            <span>{t('activeDeliveries')}</span>
             <span className="badge-pill">{inProgressOrders.length}</span>
           </button>
           <button
@@ -86,7 +86,7 @@ export function AgentPage({
             onClick={() => setActiveTab('completed')}
           >
             <span className="btn-icon">✓</span>
-            <span>Completed Jobs</span>
+            <span>{t('completedJobs')}</span>
             <span className="badge-pill">{completedOrders.length}</span>
           </button>
         </div>
@@ -128,7 +128,7 @@ export function AgentPage({
                       <span className="job-id">Order #{order.id}</span>
                     </div>
                     <div className="job-payout glass-panel">
-                      <small>Your Payout</small>
+                      <small>{t('yourPayout')}</small>
                       <strong className="gradient-text-emerald">+{money.format(order.deliveryFee)}</strong>
                     </div>
                   </div>
@@ -139,7 +139,7 @@ export function AgentPage({
                     <div className="route-point">
                       <span className="dot dot-green" />
                       <div>
-                        <small>Pickup Hub (Seller)</small>
+                        <small>{t('pickupPoint')}</small>
                         <strong>{order.seller}</strong>
                       </div>
                     </div>
@@ -149,7 +149,7 @@ export function AgentPage({
                     <div className="route-point">
                       <span className="dot dot-yellow" />
                       <div>
-                        <small>Drop Point (Buyer Destination)</small>
+                        <small>{t('dropPoint')}</small>
                         <strong>{order.destination}</strong>
                       </div>
                     </div>
@@ -170,7 +170,7 @@ export function AgentPage({
                       }}
                     >
                       <span className="truck-icon">🚚</span>
-                      <span>Accept Delivery Consignment</span>
+                      <span>{t('acceptDelivery')}</span>
                       <span className="arr">➔</span>
                     </button>
                   </div>
@@ -250,7 +250,7 @@ export function AgentPage({
                         className="button button-primary pickup-btn glow-blue"
                         onClick={() => onPickUp(order.id)}
                       >
-                        <span>📦 Confirm Material Picked Up from Seller</span>
+                        <span>📦 {t('confirmPickup')}</span>
                         <span className="arr">➔</span>
                       </button>
                     )}
@@ -263,7 +263,7 @@ export function AgentPage({
                           setActiveTab('completed');
                         }}
                       >
-                        <span>✅ Confirm Drop & Delivery to Buyer</span>
+                        <span>✅ {t('confirmDrop')}</span>
                         <span className="arr">➔</span>
                       </button>
                     )}
