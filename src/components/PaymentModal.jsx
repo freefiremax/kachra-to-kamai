@@ -21,45 +21,60 @@ export function PaymentModal({ order, onClose, onSuccess }) {
 
   return (
     <div
-      className="modal-backdrop"
+      className="modal-backdrop glass-backdrop"
       role="presentation"
       onMouseDown={(e) => e.target === e.currentTarget && !processing && onClose()}
     >
-      <div className="payment-modal" role="dialog" aria-modal="true" aria-labelledby="pay-dialog-title">
+      <div className="payment-modal glass-modal" role="dialog" aria-modal="true" aria-labelledby="pay-dialog-title">
+        {/* Mobile Swipe / Drag Handle */}
+        <div className="modal-drag-handle" />
+
         <button className="modal-close" onClick={onClose} disabled={processing} aria-label="Close payment modal">
           ✕
         </button>
 
         {completed ? (
           <div className="payment-success-card">
-            <div className="success-pulse-check">✓</div>
-            <h2>Payment Successful!</h2>
-            <p className="success-amount">{money.format(totalAmount)} paid to Kachra To Kamai Escrow</p>
-            <div className="success-meta">
-              <span>Txn Ref: <strong>TXN-{Date.now().toString().slice(-8)}</strong></span>
-              <span>Status: <strong>Confirmed · Ready for Dispatch</strong></span>
+            <div className="success-pulse-check">
+              <span>✓</span>
+              <div className="pulse-ring" />
+            </div>
+            <h2>Payment Verified!</h2>
+            <p className="success-amount">{money.format(totalAmount)} Secured in Escrow</p>
+            <div className="success-meta glass-panel">
+              <div className="s-meta-row">
+                <span>Transaction Ref:</span>
+                <strong>TXN-{Date.now().toString().slice(-8)}</strong>
+              </div>
+              <div className="s-meta-row">
+                <span>Escrow Guarantee:</span>
+                <strong className="text-emerald">Active · 100% Protected</strong>
+              </div>
             </div>
             <p className="success-note">
-              🚚 Delivery agent has been notified and consignment is scheduled for pickup.
+              🚚 Delivery agent has been notified and consignment is scheduled for immediate pickup in Kopargaon.
             </p>
           </div>
         ) : (
           <div className="payment-content">
             <div className="payment-header">
-              <span className="payment-shield">🔒 SECURE ESCROW PAYMENT</span>
-              <h2 id="pay-dialog-title">Complete Purchase</h2>
+              <div className="payment-shield">
+                <span className="shield-icon">🛡️</span>
+                <span>K2K SECURE ESCROW PROTOCOL</span>
+              </div>
+              <h2 id="pay-dialog-title">Instant Payment</h2>
               <p className="payment-subtitle">{order.listingTitle} ({order.quantity} {order.unit})</p>
             </div>
 
-            <div className="payment-amount-hero">
-              <span className="amount-label">Amount Payable</span>
-              <strong className="amount-val">{money.format(totalAmount)}</strong>
+            <div className="payment-amount-hero glass-panel">
+              <span className="amount-label">Total Payable</span>
+              <strong className="amount-val gradient-num">{money.format(totalAmount)}</strong>
               <small className="amount-breakdown">
                 Material: {money.format(order.itemTotal)} + Transit: {money.format(order.deliveryFee)}
               </small>
             </div>
 
-            <div className="payment-method-tabs">
+            <div className="payment-method-tabs glass-pills">
               <button
                 type="button"
                 className={`method-tab ${method === 'upi' ? 'active' : ''}`}
@@ -74,7 +89,7 @@ export function PaymentModal({ order, onClose, onSuccess }) {
                 onClick={() => setMethod('card')}
               >
                 <span className="tab-icon">💳</span>
-                <span>Cards / NetBanking</span>
+                <span>Card</span>
               </button>
               <button
                 type="button"
@@ -82,26 +97,27 @@ export function PaymentModal({ order, onClose, onSuccess }) {
                 onClick={() => setMethod('cod')}
               >
                 <span className="tab-icon">🤝</span>
-                <span>Pay on Dispatch</span>
+                <span>On Dispatch</span>
               </button>
             </div>
 
             {method === 'upi' && (
-              <div className="method-details upi-box">
+              <div className="method-details upi-box glass-panel">
                 <div className="qr-sim">
                   <div className="qr-box">
                     <span className="qr-glyph">▣</span>
-                    <span className="qr-tag">SCAN & PAY WITH ANY UPI APP</span>
+                    <div className="qr-scanner-line" />
+                    <span className="qr-tag">SCAN VIA ANY UPI APP</span>
                   </div>
                   <div className="upi-app-badges">
-                    <span className="app-badge gpay">GPay</span>
+                    <span className="app-badge gpay">Google Pay</span>
                     <span className="app-badge phonepe">PhonePe</span>
                     <span className="app-badge paytm">Paytm</span>
-                    <span className="app-badge bhim">BHIM</span>
+                    <span className="app-badge bhim">BHIM UPI</span>
                   </div>
                 </div>
                 <div className="vpa-field">
-                  <span className="vpa-label">Simulated UPI ID:</span>
+                  <span className="vpa-label">Simulated UPI VPA:</span>
                   <span className="vpa-id">buyer@okhdfcbank</span>
                 </div>
               </div>
@@ -109,24 +125,25 @@ export function PaymentModal({ order, onClose, onSuccess }) {
 
             {method === 'card' && (
               <div className="method-details card-box">
-                <div className="sim-card-chip">
+                <div className="sim-card-chip holographic-card">
                   <div className="chip-row">
-                    <span>💳 Visa / Rupay</span>
+                    <span>💳 RuPay / Visa Platinum</span>
                     <span className="bank-name">State Bank of India</span>
                   </div>
+                  <div className="card-chip-graphic" />
                   <p className="card-number">•••• •••• •••• 4092</p>
                   <div className="card-foot">
-                    <span>Demo Buyer</span>
-                    <span>EXP: 09/29</span>
+                    <span>DEMO BUYER</span>
+                    <span>EXP 09/29</span>
                   </div>
                 </div>
               </div>
             )}
 
             {method === 'cod' && (
-              <div className="method-details cod-box">
+              <div className="method-details cod-box glass-panel">
                 <p>
-                  🔒 Escrow hold is registered. Funds will be verified and held until the delivery agent completes material handover at your address.
+                  🔒 Escrow hold is registered on file. Payment is released to supplier only once verified doorstep handover occurs in Kopargaon.
                 </p>
               </div>
             )}
@@ -134,18 +151,18 @@ export function PaymentModal({ order, onClose, onSuccess }) {
             <div className="payment-actions">
               <button
                 type="button"
-                className="button button-primary full-width pay-cta-btn"
+                className="button button-primary full-width pay-cta-btn glow-cta"
                 onClick={handlePay}
                 disabled={processing}
               >
                 {processing ? (
                   <span className="spinner-row">
-                    <span className="spinner-dots" /> Verifying & Processing Payment...
+                    <span className="spinner-dots" /> Securing Escrow Transaction...
                   </span>
                 ) : (
                   <>
                     <span>Pay {money.format(totalAmount)} Instantly</span>
-                    <span className="arrow">→</span>
+                    <span className="arrow">➔</span>
                   </>
                 )}
               </button>
@@ -155,7 +172,7 @@ export function PaymentModal({ order, onClose, onSuccess }) {
             </div>
 
             <p className="payment-guarantee">
-              🛡️ Protected by <strong>Kachra To Kamai Escrow</strong>. Seller gets credited only after successful dispatch.
+              🛡️ Protected by <strong>Kachra To Kamai Escrow</strong>. Seller gets settlement only after delivery.
             </p>
           </div>
         )}

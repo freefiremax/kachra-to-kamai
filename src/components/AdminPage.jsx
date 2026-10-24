@@ -45,50 +45,50 @@ export function AdminPage({
   return (
     <div className="portal-page admin-portal">
       {/* Admin Banner */}
-      <section className="portal-banner admin-theme">
+      <section className="portal-banner admin-theme glass-card">
         <div className="portal-banner-content">
           <div className="portal-tag">
             <span className="portal-dot purple" />
-            <span>OPERATIONS & ECOSYSTEM COMMAND CENTER</span>
+            <span>OPERATIONS & ECOSYSTEM TELEMETRY</span>
           </div>
           <h1>
-            Kopargaon circular economy <span className="highlight-text">oversight & telemetry</span>
+            Kopargaon Circular Economy <span className="gradient-text-purple">Command Cockpit</span>
           </h1>
           <p>
             Monitor real-time material flows across all four participant types: Buyers, Sellers, Delivery Saarthi Agents, and Regulatory Safety standards.
           </p>
 
           <div className="portal-metrics-row admin-metrics-grid">
-            <div className="p-metric">
+            <div className="p-metric glass-panel">
               <strong>{metrics.totalOrders}</strong>
-              <span>Total Transactions</span>
+              <span>Transactions</span>
             </div>
-            <div className="p-metric">
-              <strong>{metrics.totalVolumeKg} kg</strong>
+            <div className="p-metric glass-panel">
+              <strong className="gradient-text-emerald">{metrics.totalVolumeKg} kg</strong>
               <span>Waste Diverted</span>
             </div>
-            <div className="p-metric">
+            <div className="p-metric glass-panel">
               <strong>{money.format(metrics.totalGMV)}</strong>
               <span>Platform GMV</span>
             </div>
-            <div className="p-metric highlight-metric">
-              <strong>{money.format(metrics.totalCommission)}</strong>
+            <div className="p-metric glass-panel highlight-metric">
+              <strong className="gradient-text-purple">{money.format(metrics.totalCommission)}</strong>
               <span>5% Escrow Commission</span>
             </div>
-            <div className="p-metric">
-              <strong>~{metrics.co2SavedKg} kg</strong>
-              <span>Est. CO₂ Avoidance</span>
+            <div className="p-metric glass-panel">
+              <strong className="text-emerald">~{metrics.co2SavedKg} kg</strong>
+              <span>CO₂ Avoidance</span>
             </div>
           </div>
         </div>
 
         {/* Demo Fast-Action Toolbar */}
-        <div className="admin-demo-toolbar">
-          <span className="toolbar-label">PRESENTATION DEMO TOOLS:</span>
-          <button className="button button-primary small" onClick={onGenerateQuickDemoOrder}>
+        <div className="admin-demo-toolbar glass-panel">
+          <span className="toolbar-label">DEMO TELEMETRY CONTROLS:</span>
+          <button className="button button-primary small glow-purple" onClick={onGenerateQuickDemoOrder}>
             <span>⚡ Generate Test Buy Request</span>
           </button>
-          <button className="button button-ghost small" onClick={onResetData}>
+          <button className="button button-ghost small glass-btn" onClick={onResetData}>
             <span>↺ Reset Demo State</span>
           </button>
         </div>
@@ -107,12 +107,12 @@ export function AdminPage({
           {statusSteps.map(([statusKey, statusLabel], idx) => {
             const stageOrders = orders.filter((o) => o.status === statusKey);
             return (
-              <div key={statusKey} className="pipeline-column">
+              <div key={statusKey} className="pipeline-column glass-card">
                 <div className="col-header">
                   <span className="col-step-num">{idx + 1}</span>
                   <div className="col-title-wrap">
                     <strong className="col-title">{statusLabel}</strong>
-                    <span className="col-count">{stageOrders.length}</span>
+                    <span className="col-count glass-pill">{stageOrders.length}</span>
                   </div>
                 </div>
 
@@ -121,10 +121,10 @@ export function AdminPage({
                     <div className="col-empty-placeholder">No orders at this stage</div>
                   ) : (
                     stageOrders.map((order) => (
-                      <div key={order.id} className="col-order-card">
+                      <div key={order.id} className="col-order-card glass-panel">
                         <div className="c-card-top">
                           <span className="c-order-id">#{order.id}</span>
-                          <span className="c-amount">{money.format(order.itemTotal + order.deliveryFee)}</span>
+                          <span className="c-amount gradient-text">{money.format(order.itemTotal + order.deliveryFee)}</span>
                         </div>
                         <strong className="c-card-title">{order.listingTitle}</strong>
                         <p className="c-card-meta">
@@ -132,7 +132,7 @@ export function AdminPage({
                         </p>
                         <div className="c-card-actions">
                           <button
-                            className="fast-forward-btn"
+                            className="fast-forward-btn glass-btn"
                             onClick={() => onFastForwardOrder(order.id)}
                             title="Advance to next step for presentation demo"
                           >
@@ -158,31 +158,31 @@ export function AdminPage({
           </div>
           <div className="filter-pill-group">
             <button
-              className={`pill-btn ${filterStage === 'all' ? 'active' : ''}`}
+              className={`pill-btn glass-pill ${filterStage === 'all' ? 'active' : ''}`}
               onClick={() => setFilterStage('all')}
             >
               All ({orders.length})
             </button>
             <button
-              className={`pill-btn ${filterStage === 'requested' ? 'active' : ''}`}
+              className={`pill-btn glass-pill ${filterStage === 'requested' ? 'active' : ''}`}
               onClick={() => setFilterStage('requested')}
             >
               Requested
             </button>
             <button
-              className={`pill-btn ${filterStage === 'seller_accepted' ? 'active' : ''}`}
+              className={`pill-btn glass-pill ${filterStage === 'seller_accepted' ? 'active' : ''}`}
               onClick={() => setFilterStage('seller_accepted')}
             >
-              Accepted (Unpaid)
+              Accepted
             </button>
             <button
-              className={`pill-btn ${filterStage === 'payment_simulated' ? 'active' : ''}`}
+              className={`pill-btn glass-pill ${filterStage === 'payment_simulated' ? 'active' : ''}`}
               onClick={() => setFilterStage('payment_simulated')}
             >
               Paid
             </button>
             <button
-              className={`pill-btn ${filterStage === 'completed' ? 'active' : ''}`}
+              className={`pill-btn glass-pill ${filterStage === 'completed' ? 'active' : ''}`}
               onClick={() => setFilterStage('completed')}
             >
               Completed
@@ -190,7 +190,7 @@ export function AdminPage({
           </div>
         </div>
 
-        <div className="admin-ledger-table-wrap">
+        <div className="admin-ledger-table-wrap glass-card">
           <table className="admin-table">
             <thead>
               <tr>
@@ -198,7 +198,7 @@ export function AdminPage({
                 <th>Material & Volume</th>
                 <th>Seller</th>
                 <th>Buyer & Drop</th>
-                <th>Gross Total</th>
+                <th>Total</th>
                 <th>Platform Fee</th>
                 <th>Status</th>
                 <th>Quick Jump</th>
@@ -207,11 +207,11 @@ export function AdminPage({
             <tbody>
               {filteredOrders.map((order) => (
                 <tr key={order.id}>
-                  <td><strong>{order.id}</strong></td>
+                  <td><strong>#{order.id}</strong></td>
                   <td>
                     <div>
                       <strong>{order.listingTitle}</strong>
-                      <small>{order.quantity} {order.unit}</small>
+                      <small className="block text-muted">{order.quantity} {order.unit}</small>
                     </div>
                   </td>
                   <td>{order.seller}</td>
@@ -226,22 +226,22 @@ export function AdminPage({
                   <td>
                     <div className="jump-links">
                       {order.status === 'requested' && (
-                        <button className="jump-btn" onClick={() => onOpenPortal('seller')}>
+                        <button className="jump-btn glass-btn" onClick={() => onOpenPortal('seller')}>
                           Open Seller ➔
                         </button>
                       )}
                       {order.status === 'seller_accepted' && (
-                        <button className="jump-btn pay" onClick={() => onOpenPortal('buyer')}>
+                        <button className="jump-btn pay glow-amber" onClick={() => onOpenPortal('buyer')}>
                           Open Buyer ➔
                         </button>
                       )}
                       {order.status === 'payment_simulated' && (
-                        <button className="jump-btn agent" onClick={() => onOpenPortal('agent')}>
+                        <button className="jump-btn agent glow-blue" onClick={() => onOpenPortal('agent')}>
                           Open Fleet ➔
                         </button>
                       )}
                       {order.status === 'delivered' && (
-                        <button className="jump-btn" onClick={() => onOpenPortal('buyer')}>
+                        <button className="jump-btn glass-btn" onClick={() => onOpenPortal('buyer')}>
                           Confirm Receipt ➔
                         </button>
                       )}

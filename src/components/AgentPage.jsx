@@ -11,7 +11,6 @@ export function AgentPage({
 }) {
   const [activeTab, setActiveTab] = useState('available'); // 'available' | 'active' | 'completed'
 
-  // Available consignments are paid orders waiting for driver pickup
   const availableOrders = orders.filter((o) => o.status === 'payment_simulated');
   const inProgressOrders = orders.filter(
     (o) => o.status === 'agent_assigned' || o.status === 'picked_up'
@@ -28,32 +27,32 @@ export function AgentPage({
   return (
     <div className="portal-page agent-portal">
       {/* Agent Banner */}
-      <section className="portal-banner agent-theme">
+      <section className="portal-banner agent-theme glass-card">
         <div className="portal-banner-content">
           <div className="portal-tag">
             <span className="portal-dot blue" />
             <span>DELIVERY FLEET PORTAL · SAARTHI RIDER HUB</span>
           </div>
           <h1>
-            Point-to-point scrap & material <span className="highlight-text">transit network</span>
+            Point-to-point material <span className="gradient-text-blue">transit & logistics network</span>
           </h1>
           <p>
-            Pick up verified industrial and farm residue batches directly from sellers, navigate direct Kopargaon routes, and earn transparent per-trip delivery payouts.
+            Pick up verified industrial batches and crop residues from sellers in Kopargaon, navigate optimized direct routes, and earn per-trip payouts.
           </p>
           <div className="portal-metrics-row">
-            <div className={`p-metric ${availableOrders.length > 0 ? 'urgent-metric' : ''}`}>
+            <div className={`p-metric glass-panel ${availableOrders.length > 0 ? 'urgent-metric pulse-subtle' : ''}`}>
               <strong>{availableOrders.length}</strong>
               <span>Available Pickups</span>
             </div>
-            <div className="p-metric">
+            <div className="p-metric glass-panel">
               <strong>{inProgressOrders.length}</strong>
               <span>Active Runs</span>
             </div>
-            <div className="p-metric">
-              <strong>{money.format(totalAgentEarnings)}</strong>
+            <div className="p-metric glass-panel highlight-metric">
+              <strong className="gradient-text-blue">{money.format(totalAgentEarnings)}</strong>
               <span>Trip Payouts</span>
             </div>
-            <div className="p-metric">
+            <div className="p-metric glass-panel">
               <strong>{completedOrders.length}</strong>
               <span>Delivered Loads</span>
             </div>
@@ -61,7 +60,7 @@ export function AgentPage({
         </div>
 
         {/* Subnav */}
-        <div className="portal-subnav">
+        <div className="portal-subnav glass-pills">
           <button
             className={`subnav-btn ${activeTab === 'available' ? 'active' : ''}`}
             onClick={() => setActiveTab('available')}
@@ -102,45 +101,45 @@ export function AgentPage({
               <p>Step 4 of process: Buyer has paid. Consignment is ready at seller location for driver pickup.</p>
             </div>
             {availableOrders.length === 0 && onViewBuyerPortal && (
-              <button className="button button-ghost small" onClick={onViewBuyerPortal}>
+              <button className="button button-ghost small glass-btn" onClick={onViewBuyerPortal}>
                 Check Buyer/Seller to generate paid order ➔
               </button>
             )}
           </div>
 
           {availableOrders.length === 0 ? (
-            <div className="portal-empty-card">
+            <div className="portal-empty-card glass-card">
               <span className="empty-emoji">🚚</span>
               <h3>No consignments currently awaiting pickup</h3>
               <p>
                 As soon as a buyer completes payment for an accepted order, it will appear here for immediate fleet assignment.
               </p>
-              <div className="empty-note">
+              <div className="empty-note glass-panel">
                 💡 <em>Flow reminder: Buyer requests ➔ Seller accepts ➔ Buyer clicks Pay ➔ Consignment appears here!</em>
               </div>
             </div>
           ) : (
             <div className="agent-jobs-grid">
               {availableOrders.map((order) => (
-                <div key={order.id} className="agent-job-card">
+                <div key={order.id} className="agent-job-card glass-card glow-blue-panel">
                   <div className="job-header">
                     <div className="job-badge-row">
-                      <span className="job-badge ready">READY FOR PICKUP</span>
+                      <span className="job-badge glass-pill">READY FOR PICKUP</span>
                       <span className="job-id">Order #{order.id}</span>
                     </div>
-                    <div className="job-payout">
-                      <small>Your Delivery Earning</small>
-                      <strong>{money.format(order.deliveryFee)}</strong>
+                    <div className="job-payout glass-panel">
+                      <small>Your Payout</small>
+                      <strong className="gradient-text-emerald">+{money.format(order.deliveryFee)}</strong>
                     </div>
                   </div>
 
                   <h3 className="job-title">{order.listingTitle}</h3>
 
-                  <div className="job-route-box">
+                  <div className="job-route-box glass-panel">
                     <div className="route-point">
                       <span className="dot dot-green" />
                       <div>
-                        <small>Pickup Point (Seller)</small>
+                        <small>Pickup Hub (Seller)</small>
                         <strong>{order.seller}</strong>
                       </div>
                     </div>
@@ -157,14 +156,14 @@ export function AgentPage({
                   </div>
 
                   <div className="job-meta-chips">
-                    <span className="chip">Load: {order.quantity} {order.unit}</span>
-                    <span className="chip">Est. Weight: {order.quantity} kg</span>
-                    <span className="chip">Vehicle: Light Commercial / Mini-Truck</span>
+                    <span className="chip glass-pill">Load: {order.quantity} {order.unit}</span>
+                    <span className="chip glass-pill">Weight: ~{order.quantity} kg</span>
+                    <span className="chip glass-pill">Vehicle: Mini-Truck</span>
                   </div>
 
                   <div className="job-action-row">
                     <button
-                      className="button button-primary accept-job-btn"
+                      className="button button-primary accept-job-btn glow-blue"
                       onClick={() => {
                         onAcceptDelivery(order.id);
                         setActiveTab('active');
@@ -172,7 +171,7 @@ export function AgentPage({
                     >
                       <span className="truck-icon">🚚</span>
                       <span>Accept Delivery Consignment</span>
-                      <span className="arr">→</span>
+                      <span className="arr">➔</span>
                     </button>
                   </div>
                 </div>
@@ -193,21 +192,21 @@ export function AgentPage({
           </div>
 
           {inProgressOrders.length === 0 ? (
-            <div className="portal-empty-card">
+            <div className="portal-empty-card glass-card">
               <span className="empty-emoji">📦</span>
               <h3>No active transit runs right now</h3>
               <p>Switch to "Available for Pickup" to claim a delivery assignment.</p>
-              <button className="button button-primary" onClick={() => setActiveTab('available')}>
+              <button className="button button-primary glow-blue" onClick={() => setActiveTab('available')}>
                 View Available Pickups
               </button>
             </div>
           ) : (
             <div className="agent-active-list">
               {inProgressOrders.map((order) => (
-                <div key={order.id} className="active-consignment-card">
+                <div key={order.id} className="active-consignment-card glass-card">
                   <div className="consign-head">
                     <div>
-                      <span className="consign-tag">ACTIVE CONSIGNMENT</span>
+                      <span className="consign-tag glass-pill">ACTIVE CONSIGNMENT</span>
                       <h3>{order.listingTitle} ({order.quantity} {order.unit})</h3>
                       <p>Order #{order.id} · Payout: <strong>{money.format(order.deliveryFee)}</strong></p>
                     </div>
@@ -222,21 +221,21 @@ export function AgentPage({
                   </div>
 
                   <div className="transit-steps-bar">
-                    <div className={`t-step ${order.status === 'agent_assigned' || order.status === 'picked_up' ? 'done' : ''}`}>
+                    <div className={`t-step glass-panel ${order.status === 'agent_assigned' || order.status === 'picked_up' ? 'done' : ''}`}>
                       <span className="t-icon">1</span>
                       <div className="t-text">
-                        <strong>Dispatch Accepted</strong>
-                        <small>Assigned to your vehicle</small>
+                        <strong>Dispatch Assigned</strong>
+                        <small>Ready for route</small>
                       </div>
                     </div>
-                    <div className={`t-step ${order.status === 'picked_up' ? 'done' : ''}`}>
+                    <div className={`t-step glass-panel ${order.status === 'picked_up' ? 'done' : ''}`}>
                       <span className="t-icon">2</span>
                       <div className="t-text">
                         <strong>Pickup from Seller</strong>
                         <small>{order.seller}</small>
                       </div>
                     </div>
-                    <div className="t-step">
+                    <div className="t-step glass-panel">
                       <span className="t-icon">3</span>
                       <div className="t-text">
                         <strong>Drop at Buyer Destination</strong>
@@ -248,24 +247,24 @@ export function AgentPage({
                   <div className="consign-actions">
                     {order.status === 'agent_assigned' && (
                       <button
-                        className="button button-primary pickup-btn"
+                        className="button button-primary pickup-btn glow-blue"
                         onClick={() => onPickUp(order.id)}
                       >
                         <span>📦 Confirm Material Picked Up from Seller</span>
-                        <span className="arr">→</span>
+                        <span className="arr">➔</span>
                       </button>
                     )}
 
                     {order.status === 'picked_up' && (
                       <button
-                        className="button button-primary deliver-btn"
+                        className="button button-primary deliver-btn glow-green"
                         onClick={() => {
                           onDeliver(order.id);
                           setActiveTab('completed');
                         }}
                       >
                         <span>✅ Confirm Drop & Delivery to Buyer</span>
-                        <span className="arr">→</span>
+                        <span className="arr">➔</span>
                       </button>
                     )}
                   </div>
@@ -287,7 +286,7 @@ export function AgentPage({
           </div>
 
           {completedOrders.length === 0 ? (
-            <div className="portal-empty-card">
+            <div className="portal-empty-card glass-card">
               <span className="empty-emoji">📜</span>
               <h3>No completed delivery runs yet</h3>
               <p>Complete your active deliveries to build your transit history and earnings log.</p>
@@ -295,7 +294,7 @@ export function AgentPage({
           ) : (
             <div className="agent-completed-table">
               {completedOrders.map((order) => (
-                <div key={order.id} className="completed-job-row">
+                <div key={order.id} className="completed-job-row glass-card">
                   <div className="comp-left">
                     <span className="comp-check">✓</span>
                     <div>
@@ -306,11 +305,11 @@ export function AgentPage({
                     </div>
                   </div>
                   <div className="comp-right">
-                    <div className="payout-amount">
+                    <div className="payout-amount glass-panel">
                       <small>Trip Payout</small>
-                      <strong>+{money.format(order.deliveryFee)}</strong>
+                      <strong className="gradient-text-emerald">+{money.format(order.deliveryFee)}</strong>
                     </div>
-                    <span className="comp-status-chip">Delivered Successfully</span>
+                    <span className="comp-status-chip glass-pill">Delivered</span>
                   </div>
                 </div>
               ))}

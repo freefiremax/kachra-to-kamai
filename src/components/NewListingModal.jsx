@@ -51,15 +51,16 @@ export function NewListingModal({ onClose, onAddListing }) {
 
   return (
     <div
-      className="modal-backdrop"
+      className="modal-backdrop glass-backdrop"
       role="presentation"
       onMouseDown={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="modal new-listing-dialog" role="dialog" aria-modal="true">
+      <div className="modal new-listing-dialog glass-modal" role="dialog" aria-modal="true">
+        <div className="modal-drag-handle" />
         <button className="modal-close" onClick={onClose}>✕</button>
 
         <div className="new-listing-header">
-          <span className="eyebrow">SELLER INVENTORY</span>
+          <span className="eyebrow glass-pill">SELLER INVENTORY</span>
           <h2>List Material for Sale</h2>
           <p>Describe your scrap, agricultural residue, or surplus items for local buyers.</p>
         </div>
@@ -73,7 +74,7 @@ export function NewListingModal({ onClose, onAddListing }) {
                 value={form.title}
                 onChange={(e) => update('title', e.target.value)}
                 placeholder="e.g. Clean corrugated cardboard bales"
-                className={errors.title ? 'has-error' : ''}
+                className={`portal-input glass-input ${errors.title ? 'has-error' : ''}`}
               />
               {errors.title && <small className="field-err">{errors.title}</small>}
             </label>
@@ -83,6 +84,7 @@ export function NewListingModal({ onClose, onAddListing }) {
               <select
                 value={form.category}
                 onChange={(e) => update('category', e.target.value)}
+                className="portal-input glass-input"
               >
                 {Object.entries(categoryRules)
                   .filter(([, cat]) => !cat.blocked)
@@ -103,9 +105,13 @@ export function NewListingModal({ onClose, onAddListing }) {
                   value={form.quantity}
                   onChange={(e) => update('quantity', e.target.value)}
                   placeholder="e.g. 150"
-                  className={errors.quantity ? 'has-error' : ''}
+                  className={`portal-input glass-input ${errors.quantity ? 'has-error' : ''}`}
                 />
-                <select value={form.unit} onChange={(e) => update('unit', e.target.value)}>
+                <select
+                  value={form.unit}
+                  onChange={(e) => update('unit', e.target.value)}
+                  className="portal-input glass-input"
+                >
                   <option value="kg">kg</option>
                   <option value="items">items</option>
                 </select>
@@ -121,7 +127,7 @@ export function NewListingModal({ onClose, onAddListing }) {
                 value={form.price}
                 onChange={(e) => update('price', e.target.value)}
                 placeholder="e.g. 14"
-                className={errors.price ? 'has-error' : ''}
+                className={`portal-input glass-input ${errors.price ? 'has-error' : ''}`}
               />
               {errors.price && <small className="field-err">{errors.price}</small>}
             </label>
@@ -133,7 +139,7 @@ export function NewListingModal({ onClose, onAddListing }) {
                 value={form.area}
                 onChange={(e) => update('area', e.target.value)}
                 placeholder="e.g. Station Road, Kopargaon"
-                className={errors.area ? 'has-error' : ''}
+                className={`portal-input glass-input ${errors.area ? 'has-error' : ''}`}
               />
               {errors.area && <small className="field-err">{errors.area}</small>}
             </label>
@@ -145,17 +151,17 @@ export function NewListingModal({ onClose, onAddListing }) {
                 value={form.description}
                 onChange={(e) => update('description', e.target.value)}
                 placeholder="Describe material cleanliness, packing, and loading access..."
-                className={errors.description ? 'has-error' : ''}
+                className={`portal-input glass-input ${errors.description ? 'has-error' : ''}`}
               />
               {errors.description && <small className="field-err">{errors.description}</small>}
             </label>
           </div>
 
           <div className="modal-actions-bar">
-            <button type="button" className="button button-ghost" onClick={onClose}>
+            <button type="button" className="button button-ghost glass-btn" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="button button-primary">
+            <button type="submit" className="button button-primary glow-amber">
               Publish Listing ➔
             </button>
           </div>
