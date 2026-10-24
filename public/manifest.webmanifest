@@ -1,0 +1,18 @@
+{
+  "name": "Kachra To Kamai",
+  "short_name": "Kachra To Kamai",
+  "description": "A local marketplace for useful surplus, reusable and recyclable materials.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fffdf7",
+  "theme_color": "#ffd83d",
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
