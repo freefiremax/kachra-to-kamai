@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { initialListings, initialOrders, statusSteps } from './data';
 import { calculateOrderBreakdown, getStatusIndex } from './lib/marketplace';
 import { loadDemoState, resetDemoState } from './lib/persistence';
-import { loadInitialDatabase, subscribeToDatabase, syncDatabaseState } from './lib/db';
+import { loadInitialDatabase, persistListingUpdate, persistOrderUpdate, subscribeToDatabase, syncDatabaseState } from './lib/db';
 
 import { PortalHeader } from './components/PortalHeader';
 import { BuyerPage } from './components/BuyerPage';
@@ -64,11 +64,58 @@ export function App() {
   // 3. Subscribe to Real-Time Updates from Database & Other Participant Devices
   useEffect(() => {
     const unsubscribe = subscribeToDatabase((incoming) => {
+      if (!incoming) return;
+
       if (incoming.listings && Array.isArray(incoming.listings)) {
         setListings(incoming.listings);
       }
       if (incoming.orders && Array.isArray(incoming.orders)) {
         setOrders(incoming.orders);
+      }
+      if (incoming.updatedOrder) {
+        setOrders((curr) => {
+          const exists = curr.some((o) => String(o.id) === String(incoming.updatedOrder.id));
+          if (exists) {
+            return curr.map((o) =>
+              String(o.id) === String(incoming.updatedOrder.id) ? { ...o, ...incoming.updatedOrder } : o
+            );
+          }
+          return [incoming.updatedOrder, ...curr];
+        });
+      }
+      if (incoming.insertOrder) {
+        setOrders((curr) => {
+          if (curr.some((o) => String(o.id) === String(incoming.insertOrder.id))) {
+            return curr.map((o) =>
+              String(o.id) === String(incoming.insertOrder.id) ? { ...o, ...incoming.insertOrder } : o
+            );
+          }
+          return [incoming.insertOrder, ...curr];
+        });
+      }
+      if (incoming.deleteOrderId) {
+        setOrders((curr) => curr.filter((o) => String(o.id) !== String(incoming.deleteOrderId)));
+      }
+      if (incoming.updatedListing) {
+        setListings((curr) => {
+          const exists = curr.some((l) => String(l.id) === String(incoming.updatedListing.id));
+          if (exists) {
+            return curr.map((l) =>
+              String(l.id) === String(incoming.updatedListing.id) ? { ...l, ...incoming.updatedListing } : l
+            );
+          }
+          return [incoming.updatedListing, ...curr];
+        });
+      }
+      if (incoming.insertListing) {
+        setListings((curr) => {
+          if (curr.some((l) => String(l.id) === String(incoming.insertListing.id))) {
+            return curr.map((l) =>
+              String(l.id) === String(incoming.insertListing.id) ? { ...l, ...incoming.insertListing } : l
+            );
+          }
+          return [incoming.insertListing, ...curr];
+        });
       }
     });
     return unsubscribe;
@@ -128,6 +175,7 @@ export function App() {
     };
 
     setOrders((curr) => [newOrder, ...curr]);
+    persistOrderUpdate(newOrder, 'Buyer', `Buy request for "${listing.title}" submitted`);
     notify(`Buy request for "${listing.title}" submitted! Seller must accept.`);
   }
 
@@ -141,20 +189,24 @@ export function App() {
       curr.map((item) => {
         if (item.id === order.listingId) {
           const remaining = Math.max(0, item.quantity - order.quantity);
-          return {
+          const updatedListing = {
             ...item,
             quantity: remaining,
             availability: remaining > 0 ? `${remaining} ${item.unit} remaining` : 'Batch reserved',
           };
+          persistListingUpdate(updatedListing);
+          return updatedListing;
         }
         return item;
       })
     );
 
     // Update status to seller_accepted
+    const updatedOrder = { ...order, status: 'seller_accepted' };
     setOrders((curr) =>
-      curr.map((o) => (o.id === orderId ? { ...o, status: 'seller_accepted' } : o))
+      curr.map((o) => (o.id === orderId ? updatedOrder : o))
     );
+    persistOrderUpdate(updatedOrder, 'Seller', `Seller accepted order #${orderId}`);
     notify(`Order #${orderId} accepted! Buyer notified to proceed with payment.`);
   }
 
@@ -166,45 +218,71 @@ export function App() {
   // 3. Buyer Completes Payment
   function handlePaymentSuccess(orderId) {
     setActivePayOrder(null);
-    setOrders((curr) =>
-      curr.map((o) => (o.id === orderId ? { ...o, status: 'payment_simulated' } : o))
-    );
+    const order = orders.find((o) => o.id === orderId);
+    const updatedOrder = order ? { ...order, status: 'payment_simulated' } : null;
+    if (updatedOrder) {
+      setOrders((curr) =>
+        curr.map((o) => (o.id === orderId ? updatedOrder : o))
+      );
+      persistOrderUpdate(updatedOrder, 'Buyer (Escrow)', `Payment secured in escrow`);
+    }
     notify(`Payment verified! Consignment is now ready for delivery agent pickup.`);
   }
 
   // 4. Delivery Agent Actions
   function handleAcceptDelivery(orderId) {
-    setOrders((curr) =>
-      curr.map((o) => (o.id === orderId ? { ...o, status: 'agent_assigned' } : o))
-    );
+    const order = orders.find((o) => o.id === orderId);
+    const updatedOrder = order ? { ...order, status: 'agent_assigned' } : null;
+    if (updatedOrder) {
+      setOrders((curr) =>
+        curr.map((o) => (o.id === orderId ? updatedOrder : o))
+      );
+      persistOrderUpdate(updatedOrder, 'Delivery Agent', `Agent assigned to consignment #${orderId}`);
+    }
     notify(`Consignment #${orderId} accepted! Drive to seller location for pickup.`);
   }
 
   function handlePickUp(orderId) {
-    setOrders((curr) =>
-      curr.map((o) => (o.id === orderId ? { ...o, status: 'picked_up' } : o))
-    );
+    const order = orders.find((o) => o.id === orderId);
+    const updatedOrder = order ? { ...order, status: 'picked_up' } : null;
+    if (updatedOrder) {
+      setOrders((curr) =>
+        curr.map((o) => (o.id === orderId ? updatedOrder : o))
+      );
+      persistOrderUpdate(updatedOrder, 'Delivery Agent', `Consignment #${orderId} loaded on vehicle`);
+    }
     notify(`Material loaded! Consignment is now in transit to destination.`);
   }
 
   function handleDeliver(orderId) {
-    setOrders((curr) =>
-      curr.map((o) => (o.id === orderId ? { ...o, status: 'delivered' } : o))
-    );
+    const order = orders.find((o) => o.id === orderId);
+    const updatedOrder = order ? { ...order, status: 'delivered' } : null;
+    if (updatedOrder) {
+      setOrders((curr) =>
+        curr.map((o) => (o.id === orderId ? updatedOrder : o))
+      );
+      persistOrderUpdate(updatedOrder, 'Delivery Agent', `Consignment #${orderId} delivered at destination`);
+    }
     notify(`Consignment delivered at destination! Awaiting buyer receipt confirmation.`);
   }
 
   // 5. Buyer Confirms Receipt
   function handleConfirmReceipt(orderId) {
-    setOrders((curr) =>
-      curr.map((o) => (o.id === orderId ? { ...o, status: 'completed' } : o))
-    );
+    const order = orders.find((o) => o.id === orderId);
+    const updatedOrder = order ? { ...order, status: 'completed' } : null;
+    if (updatedOrder) {
+      setOrders((curr) =>
+        curr.map((o) => (o.id === orderId ? updatedOrder : o))
+      );
+      persistOrderUpdate(updatedOrder, 'Buyer', `Receipt confirmed for order #${orderId}`);
+    }
     notify(`Receipt confirmed! Full circular transaction completed and funds settled.`);
   }
 
   // Demo Controls
   function handleAddListing(newListing) {
     setListings((curr) => [newListing, ...curr]);
+    persistListingUpdate(newListing);
     notify(`New listing "${newListing.title}" published!`);
   }
 
@@ -225,7 +303,9 @@ export function App() {
       if (nextStatus === 'seller_accepted') {
         handleAcceptRequest(orderId);
       } else {
-        setOrders((curr) => curr.map((o) => (o.id === orderId ? { ...o, status: nextStatus } : o)));
+        const updated = { ...order, status: nextStatus };
+        setOrders((curr) => curr.map((o) => (o.id === orderId ? updated : o)));
+        persistOrderUpdate(updated, 'Admin Ops', `Fast-forwarded to ${nextStatus}`);
         notify(`Order #${orderId} advanced to "${nextStatus}".`);
       }
     }
@@ -251,6 +331,7 @@ export function App() {
       createdAt: 'Just now',
     };
     setOrders((curr) => [newOrder, ...curr]);
+    persistOrderUpdate(newOrder, 'Presenter Demo', `Generated quick demo order`);
     notify(`Quick demo buy request created for ${sampleItem.title}!`);
   }
 

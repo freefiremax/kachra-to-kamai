@@ -5,10 +5,15 @@ import { broadcastStateChange, subscribeStateSync } from './sync.js';
 
 let dbStatus = {
   isConnected: false,
+  isRealtimeActive: false,
   provider: 'local', // 'supabase' | 'cloud-api' | 'local'
   label: 'Local Browser Database',
   lastSync: null,
+  error: null,
 };
+
+// Track listeners to database updates
+const listeners = new Set();
 
 export function getDbStatus() {
   const { url, key } = getSupabaseCredentials();
@@ -17,13 +22,13 @@ export function getDbStatus() {
       ...dbStatus,
       isConnected: true,
       provider: 'supabase',
-      label: 'Supabase Cloud PostgreSQL',
+      label: 'Supabase Cloud PostgreSQL (Live)',
     };
   }
   return dbStatus;
 }
 
-// Map frontend camelCase listing to Supabase snake_case
+// Convert camelCase listing to Supabase snake_case
 function listingToRow(l) {
   return {
     id: String(l.id),
@@ -43,7 +48,7 @@ function listingToRow(l) {
   };
 }
 
-function rowToListing(r) {
+export function rowToListing(r) {
   return {
     id: r.id,
     title: r.title,
@@ -61,13 +66,13 @@ function rowToListing(r) {
   };
 }
 
-// Map frontend camelCase order to Supabase snake_case
+// Convert camelCase order to Supabase snake_case
 function orderToRow(o) {
   return {
     id: String(o.id),
     listing_id: o.listingId ? String(o.listingId) : null,
     listing_title: o.listingTitle,
-    buyer: o.buyer || 'Local Buyer',
+    buyer: o.buyer || 'Verified Buyer',
     seller: o.seller,
     quantity: Number(o.quantity),
     unit: o.unit,
@@ -81,12 +86,12 @@ function orderToRow(o) {
   };
 }
 
-function rowToOrder(r) {
+export function rowToOrder(r) {
   return {
-    id: r.id,
+    id: String(r.id),
     listingId: r.listing_id,
     listingTitle: r.listing_title,
-    buyer: r.buyer,
+    buyer: r.buyer || 'Verified Buyer',
     seller: r.seller,
     quantity: Number(r.quantity),
     unit: r.unit,
@@ -96,14 +101,12 @@ function rowToOrder(r) {
     destination: r.destination,
     distanceKm: Number(r.distance_km),
     status: r.status,
+    createdAt: r.created_at ? new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now',
   };
 }
 
 /**
- * Loads the initial database state:
- * 1. Checks Supabase if configured.
- * 2. Checks Vercel Serverless /api/db if deployed.
- * 3. Falls back to local persistent storage.
+ * Loads initial database state on application startup
  */
 export async function loadInitialDatabase() {
   const supabase = getSupabaseClient();
@@ -116,17 +119,16 @@ export async function loadInitialDatabase() {
       ]);
 
       if (!listingsRes.error && !ordersRes.error) {
-        dbStatus = {
-          isConnected: true,
-          provider: 'supabase',
-          label: 'Supabase Cloud PostgreSQL',
-          lastSync: new Date().toISOString(),
-        };
+        dbStatus.isConnected = true;
+        dbStatus.provider = 'supabase';
+        dbStatus.label = 'Supabase Cloud PostgreSQL';
+        dbStatus.lastSync = new Date().toISOString();
+        dbStatus.error = null;
 
         let loadedListings = (listingsRes.data || []).map(rowToListing);
         let loadedOrders = (ordersRes.data || []).map(rowToOrder);
 
-        // If Supabase table was just created and is empty, seed it with pilot data!
+        // Auto-seed if newly created Supabase tables are empty
         if (loadedListings.length === 0) {
           const rowsToSeed = initialListings.map(listingToRow);
           await supabase.from('listings').insert(rowsToSeed);
@@ -141,25 +143,27 @@ export async function loadInitialDatabase() {
 
         saveDemoState({ listings: loadedListings, orders: loadedOrders });
         return { listings: loadedListings, orders: loadedOrders };
+      } else {
+        if (listingsRes.error) console.warn('[Supabase listings error]', listingsRes.error);
+        if (ordersRes.error) console.warn('[Supabase orders error]', ordersRes.error);
       }
     } catch (err) {
-      console.warn('[Supabase load error, falling back to serverless/local]', err);
+      console.warn('[Supabase initial fetch failed, using fallback]', err);
+      dbStatus.error = err.message;
     }
   }
 
-  // 2. Try Vercel Serverless Cloud DB
+  // Fallback 1: Vercel Cloud Serverless API
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
     try {
       const res = await fetch('/api/db');
       if (res.ok) {
         const body = await res.json();
         if (body.data?.listings && body.data?.orders) {
-          dbStatus = {
-            isConnected: true,
-            provider: 'cloud-api',
-            label: 'Vercel Serverless Cloud DB',
-            lastSync: body.updatedAt,
-          };
+          dbStatus.isConnected = true;
+          dbStatus.provider = 'cloud-api';
+          dbStatus.label = 'Vercel Serverless Cloud DB';
+          dbStatus.lastSync = body.updatedAt;
           saveDemoState(body.data);
           return body.data;
         }
@@ -169,30 +173,93 @@ export async function loadInitialDatabase() {
     }
   }
 
-  // 3. Fallback to Local Persistent Storage
+  // Fallback 2: Local storage
   const local = loadDemoState();
-  dbStatus = {
-    isConnected: true,
-    provider: 'local',
-    label: 'Local Browser Database (Sync Active)',
-    lastSync: new Date().toISOString(),
-  };
+  dbStatus.isConnected = true;
+  dbStatus.provider = 'local';
+  dbStatus.label = 'Local Browser Database (Sync Active)';
+  dbStatus.lastSync = new Date().toISOString();
   return local;
 }
 
 /**
- * Persists changes across all connected database layers:
- * - Supabase (if credentials configured)
- * - Vercel Serverless API (if hosted)
- * - LocalStorage + BroadcastChannel (for instantaneous multi-tab sync)
+ * Atomic mutation for an Order with on-the-spot sync and audit logging
+ */
+export async function persistOrderUpdate(order, actor = 'System', note = '') {
+  // 1. Broadcast locally for instant multi-tab sync (0ms)
+  broadcastStateChange({ updatedOrder: order });
+
+  // 2. Immediately update local storage snapshot
+  try {
+    const current = loadDemoState();
+    const exists = current.orders.some((o) => String(o.id) === String(order.id));
+    const nextOrders = exists
+      ? current.orders.map((o) => (String(o.id) === String(order.id) ? { ...o, ...order } : o))
+      : [order, ...current.orders];
+    saveDemoState({ ...current, orders: nextOrders });
+  } catch {
+    // ignore
+  }
+
+  // 3. Upsert to Supabase with event log
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    try {
+      const row = orderToRow(order);
+      await Promise.allSettled([
+        supabase.from('orders').upsert(row, { onConflict: 'id' }),
+        supabase.from('order_events').insert({
+          order_id: String(order.id),
+          status: order.status,
+          actor,
+          note: note || `Order #${order.id} updated to ${order.status}`,
+        }),
+      ]);
+    } catch (err) {
+      console.warn('[Supabase Order Update Error]', err);
+    }
+  }
+}
+
+/**
+ * Atomic mutation for a Listing with on-the-spot sync
+ */
+export async function persistListingUpdate(listing) {
+  // 1. Broadcast locally for instant multi-tab sync (0ms)
+  broadcastStateChange({ updatedListing: listing });
+
+  // 2. Immediately update local storage snapshot
+  try {
+    const current = loadDemoState();
+    const exists = current.listings.some((l) => String(l.id) === String(listing.id));
+    const nextListings = exists
+      ? current.listings.map((l) => (String(l.id) === String(listing.id) ? { ...l, ...listing } : l))
+      : [listing, ...current.listings];
+    saveDemoState({ ...current, listings: nextListings });
+  } catch {
+    // ignore
+  }
+
+  // 3. Upsert to Supabase
+  const supabase = getSupabaseClient();
+  if (supabase) {
+    try {
+      const row = listingToRow(listing);
+      await supabase.from('listings').upsert(row, { onConflict: 'id' });
+    } catch (err) {
+      console.warn('[Supabase Listing Update Error]', err);
+    }
+  }
+}
+
+/**
+ * Full state synchronization (backups across local storage, Supabase, and Vercel API)
  */
 export async function syncDatabaseState({ listings, orders }) {
-  // Always save locally & broadcast for instant responsiveness
   saveDemoState({ listings, orders });
   broadcastStateChange({ listings, orders });
   dbStatus.lastSync = new Date().toISOString();
 
-  // Sync to Supabase in background
   const supabase = getSupabaseClient();
   if (supabase) {
     try {
@@ -204,11 +271,10 @@ export async function syncDatabaseState({ listings, orders }) {
         supabase.from('orders').upsert(orderRows, { onConflict: 'id' }),
       ]);
     } catch (err) {
-      console.warn('[Supabase Sync Error]', err);
+      console.warn('[Supabase Full Sync Error]', err);
     }
   }
 
-  // Sync to Vercel Serverless API in background
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
     try {
       fetch('/api/db', {
@@ -223,71 +289,136 @@ export async function syncDatabaseState({ listings, orders }) {
 }
 
 /**
- * Sets up live real-time subscription:
- * - Listens for Supabase Realtime postgres_changes
- * - Listens for cross-tab BroadcastChannel & storage events
- * - Polls Vercel Serverless API on deployed environments
+ * Real-time subscription engine:
+ * 1. Supabase Realtime WebSocket channel for instant remote updates
+ * 2. Cross-tab BroadcastChannel for 0ms same-browser tab sync
+ * 3. Fast resilient poller (every 2.5s) to guarantee updates even on restrictive networks
  */
 export function subscribeToDatabase(onData) {
   if (typeof window === 'undefined') return () => {};
 
+  listeners.add(onData);
   const cleanups = [];
 
-  // 1. Cross-tab & Storage Sync
+  // 1. Cross-tab real-time sync
   const unsubsSync = subscribeStateSync((incoming) => {
-    if (incoming && (incoming.listings || incoming.orders)) {
+    if (incoming) {
       onData(incoming);
     }
   });
   cleanups.push(unsubsSync);
 
-  // 2. Supabase Realtime Subscription
+  // 2. Supabase Realtime WebSocket Subscription
   const supabase = getSupabaseClient();
   if (supabase) {
     try {
       const channel = supabase
-        .channel('k2k-db-changes')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, async () => {
-          const res = await supabase.from('orders').select('*').order('created_at', { ascending: false });
-          if (!res.error && res.data) {
-            onData({ orders: res.data.map(rowToOrder) });
+        .channel('k2k-realtime-market')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'orders' },
+          (payload) => {
+            dbStatus.lastSync = new Date().toISOString();
+            if (payload.eventType === 'INSERT' && payload.new) {
+              const newOrder = rowToOrder(payload.new);
+              onData({ insertOrder: newOrder });
+            } else if (payload.eventType === 'UPDATE' && payload.new) {
+              const updatedOrder = rowToOrder(payload.new);
+              onData({ updatedOrder });
+            } else if (payload.eventType === 'DELETE' && payload.old) {
+              onData({ deleteOrderId: String(payload.old.id) });
+            } else {
+              // General refresh fallback
+              supabase.from('orders').select('*').order('created_at', { ascending: false }).then((res) => {
+                if (!res.error && res.data) {
+                  onData({ orders: res.data.map(rowToOrder) });
+                }
+              });
+            }
           }
-        })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'listings' }, async () => {
-          const res = await supabase.from('listings').select('*').order('created_at', { ascending: false });
-          if (!res.error && res.data) {
-            onData({ listings: res.data.map(rowToListing) });
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'listings' },
+          (payload) => {
+            dbStatus.lastSync = new Date().toISOString();
+            if (payload.eventType === 'INSERT' && payload.new) {
+              const newListing = rowToListing(payload.new);
+              onData({ insertListing: newListing });
+            } else if (payload.eventType === 'UPDATE' && payload.new) {
+              const updatedListing = rowToListing(payload.new);
+              onData({ updatedListing });
+            } else {
+              supabase.from('listings').select('*').order('created_at', { ascending: false }).then((res) => {
+                if (!res.error && res.data) {
+                  onData({ listings: res.data.map(rowToListing) });
+                }
+              });
+            }
           }
-        })
-        .subscribe();
+        )
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            dbStatus.isRealtimeActive = true;
+          }
+        });
 
       cleanups.push(() => {
         supabase.removeChannel(channel);
+        dbStatus.isRealtimeActive = false;
       });
     } catch (err) {
-      console.warn('[Supabase Realtime Subscription Error]', err);
+      console.warn('[Supabase Realtime Channel Error]', err);
+    }
+
+    // 3. Resilient Live Poller (every 2s) for instant sync across separate phones & laptops
+    let isFetching = false;
+    let lastKnownOrdersHash = '';
+
+    const fetchLatest = async () => {
+      if (isFetching) return;
+      isFetching = true;
+      try {
+        const [ordersRes, listingsRes] = await Promise.all([
+          supabase.from('orders').select('*').order('created_at', { ascending: false }),
+          supabase.from('listings').select('*').order('created_at', { ascending: false }),
+        ]);
+
+        if (!ordersRes.error && ordersRes.data) {
+          const hash = ordersRes.data.map((o) => `${o.id}:${o.status}`).join('|');
+          if (hash !== lastKnownOrdersHash) {
+            lastKnownOrdersHash = hash;
+            dbStatus.lastSync = new Date().toISOString();
+            onData({ orders: ordersRes.data.map(rowToOrder) });
+          }
+        }
+
+        if (!listingsRes.error && listingsRes.data) {
+          onData({ listings: listingsRes.data.map(rowToListing) });
+        }
+      } catch {
+        // ignore background poll errors
+      } finally {
+        isFetching = false;
+      }
+    };
+
+    const pollInterval = setInterval(fetchLatest, 2000);
+    cleanups.push(() => clearInterval(pollInterval));
+
+    if (typeof document !== 'undefined') {
+      const handleVisibilityChange = () => {
+        if (!document.hidden) {
+          fetchLatest();
+        }
+      };
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      cleanups.push(() => document.removeEventListener('visibilitychange', handleVisibilityChange));
     }
   }
 
-  // 3. Periodic Cloud Poll for Vercel Multi-Device presentations
-  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && !supabase) {
-    const interval = setInterval(async () => {
-      try {
-        const res = await fetch('/api/db');
-        if (res.ok) {
-          const body = await res.json();
-          if (body.data?.listings && body.data?.orders) {
-            onData(body.data);
-          }
-        }
-      } catch {
-        // ignore
-      }
-    }, 4000);
-    cleanups.push(() => clearInterval(interval));
-  }
-
   return () => {
+    listeners.delete(onData);
     cleanups.forEach((fn) => {
       try {
         fn();
