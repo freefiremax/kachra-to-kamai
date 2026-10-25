@@ -5,6 +5,7 @@ import { loadDemoState, resetDemoState } from './lib/persistence';
 import { loadInitialDatabase, persistListingUpdate, persistOrderUpdate, subscribeToDatabase, syncDatabaseState } from './lib/db';
 
 import { PortalHeader } from './components/PortalHeader';
+import { HomePage } from './components/HomePage';
 import { BuyerPage } from './components/BuyerPage';
 import { SellerPage } from './components/SellerPage';
 import { AgentPage } from './components/AgentPage';
@@ -13,17 +14,18 @@ import { PresenterPage } from './components/PresenterPage';
 import { PaymentModal } from './components/PaymentModal';
 import { NewListingModal } from './components/NewListingModal';
 import { DatabaseModal } from './components/DatabaseModal';
+import { GetStartedModal } from './components/GetStartedModal';
 
 function getInitialPortal() {
-  if (typeof window === 'undefined') return 'buyer';
+  if (typeof window === 'undefined') return 'home';
   const hash = window.location.hash.replace('#', '').toLowerCase();
-  if (['buyer', 'seller', 'agent', 'admin', 'presenter'].includes(hash)) return hash;
+  if (['home', 'buyer', 'seller', 'agent', 'admin', 'presenter'].includes(hash)) return hash;
 
   const params = new URLSearchParams(window.location.search);
   const portalParam = (params.get('portal') || params.get('role') || '').toLowerCase();
-  if (['buyer', 'seller', 'agent', 'admin', 'presenter'].includes(portalParam)) return portalParam;
+  if (['home', 'buyer', 'seller', 'agent', 'admin', 'presenter'].includes(portalParam)) return portalParam;
 
-  return 'presenter'; // Default to 4-in-1 presenter view for immediate wow factor & presentations!
+  return 'home'; // Default to pristine Home landing page matching reference design!
 }
 
 export function App() {
@@ -36,6 +38,7 @@ export function App() {
   const [activePayOrder, setActivePayOrder] = useState(null);
   const [showNewListingModal, setShowNewListingModal] = useState(false);
   const [showDbModal, setShowDbModal] = useState(false);
+  const [showGetStartedModal, setShowGetStartedModal] = useState(false);
   const [toast, setToast] = useState('');
 
   // 1. Initial Database Hydration (Supabase / Serverless / Local)
@@ -125,7 +128,7 @@ export function App() {
   useEffect(() => {
     function handleHashChange() {
       const hash = window.location.hash.replace('#', '').toLowerCase();
-      if (['buyer', 'seller', 'agent', 'admin', 'presenter'].includes(hash)) {
+      if (['home', 'buyer', 'seller', 'agent', 'admin', 'presenter'].includes(hash)) {
         setPortal(hash);
       }
     }
@@ -350,10 +353,22 @@ export function App() {
         availablePickupsCount={availablePickupsCount}
         pendingBuyerPaymentsCount={pendingBuyerPaymentsCount}
         onOpenDbModal={() => setShowDbModal(true)}
+        onOpenGetStarted={() => setShowGetStartedModal(true)}
       />
 
       {/* Main Portal View Router */}
       <main className="portal-content-wrap">
+        {(portal === 'home' || !portal) && (
+          <HomePage
+            listings={listings}
+            orders={orders}
+            onNavigate={handleSelectPortal}
+            onOpenNewListing={() => setShowNewListingModal(true)}
+            onRequestBuy={handleRequestBuy}
+            onOpenGetStarted={() => setShowGetStartedModal(true)}
+          />
+        )}
+
         {portal === 'buyer' && (
           <BuyerPage
             listings={listings}
@@ -428,6 +443,15 @@ export function App() {
         <NewListingModal
           onClose={() => setShowNewListingModal(false)}
           onAddListing={handleAddListing}
+        />
+      )}
+
+      {/* Get Started Role Selection Modal */}
+      {showGetStartedModal && (
+        <GetStartedModal
+          onClose={() => setShowGetStartedModal(false)}
+          onSelectRole={handleSelectPortal}
+          onOpenNewListing={() => setShowNewListingModal(true)}
         />
       )}
 

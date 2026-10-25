@@ -1,5 +1,5 @@
-import { runtime } from '../lib/runtime';
 import { languages, useTranslation } from '../lib/i18n';
+import { BrandLogo } from './BrandLogo';
 
 export function PortalHeader({
   activePortal,
@@ -8,185 +8,207 @@ export function PortalHeader({
   availablePickupsCount,
   pendingBuyerPaymentsCount,
   onOpenDbModal,
+  onOpenGetStarted,
 }) {
   const { lang, setLang, t } = useTranslation();
 
   return (
     <>
-      {/* Top Glassmorphic Navigation Bar */}
-      <header className="main-portal-header">
-        <div className="header-brand-wrap">
-          <button
-            className="brand-btn"
-            onClick={() => onSelectPortal('presenter')}
-            title="Kachra To Kamai - Circular Marketplace"
-            aria-label="Kachra To Kamai Home"
-          >
-            <div className="brand-logo-icon">
-              <span className="logo-symbol">♻</span>
-              <span className="logo-sparkle" />
-            </div>
-            <div className="brand-names">
-              <span className="brand-title">
-                Kachra<span className="brand-accent">To</span>Kamai
-              </span>
-              <span className="brand-subtitle">{t('tagline')}</span>
-            </div>
-          </button>
+      {/* Top Navbar Matching User Reference Screenshot */}
+      <header className="ktk-header">
+        <div className="ktk-header-inner">
+          
+          {/* Brand Logo with Sprout */}
+          <div className="flex items-center gap-3">
+            <button
+              className="ktk-brand-btn"
+              onClick={() => onSelectPortal('home')}
+              title="Kachra To Kamai - Turn Waste Into Worth"
+              aria-label="Kachra To Kamai Home"
+            >
+              <BrandLogo size="medium" />
+            </button>
 
-          <div className="hub-badge" title="Active Pilot Cluster">
-            <span className="dot dot-live" />
-            <span className="hub-text">{t('region')}</span>
+            {/* DB Sync indicator */}
+            <button
+              type="button"
+              className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 transition-colors cursor-pointer"
+              onClick={onOpenDbModal}
+              title="Database & Real-time Cloud Sync Status"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span>DB Sync</span>
+            </button>
           </div>
 
-          {/* Database & Cloud Sync Status Button */}
-          <button
-            type="button"
-            className="db-badge glass-pill"
-            onClick={onOpenDbModal}
-            title="Database & Real-time Cloud Sync Status"
-          >
-            <span className="dot dot-db" />
-            <span className="db-badge-text">DB Sync</span>
-          </button>
-        </div>
-
-        {/* Interactive Language Switcher Pill */}
-        <div className="lang-switcher glass-pills" role="radiogroup" aria-label="Select Language">
-          {languages.map((item) => (
+          {/* Center Navigation Links (Exact Match to Screenshot) */}
+          <nav className="ktk-nav-menu" aria-label="Main Navigation">
             <button
-              key={item.code}
               type="button"
-              className={`lang-btn ${lang === item.code ? 'active' : ''}`}
-              onClick={() => setLang(item.code)}
-              title={item.label}
-              aria-checked={lang === item.code}
+              className={`ktk-nav-link ${activePortal === 'home' ? 'active' : ''}`}
+              onClick={() => onSelectPortal('home')}
             >
-              <span className="lang-text-full">{item.label}</span>
-              <span className="lang-text-short">{item.short}</span>
+              Home
             </button>
-          ))}
+
+            <button
+              type="button"
+              className={`ktk-nav-link ${activePortal === 'buyer' ? 'active' : ''}`}
+              onClick={() => onSelectPortal('buyer')}
+            >
+              <span>Browse</span>
+              {pendingBuyerPaymentsCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full animate-ping" />
+              )}
+            </button>
+
+            <button
+              type="button"
+              className={`ktk-nav-link ${activePortal === 'seller' ? 'active' : ''}`}
+              onClick={() => onSelectPortal('seller')}
+            >
+              <span>Sell Waste</span>
+              {pendingRequestsCount > 0 && (
+                <span className="ml-1 px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-800 text-[10px]">
+                  {pendingRequestsCount}
+                </span>
+              )}
+            </button>
+
+            <button
+              type="button"
+              className={`ktk-nav-link ${activePortal === 'buyer' ? 'active' : ''}`}
+              onClick={() => onSelectPortal('buyer')}
+            >
+              Buy Waste
+            </button>
+
+            <button
+              type="button"
+              className="ktk-nav-link"
+              onClick={() => {
+                if (activePortal !== 'home') {
+                  onSelectPortal('home');
+                }
+                setTimeout(() => {
+                  const el = document.getElementById('about');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+              }}
+            >
+              About
+            </button>
+
+            {/* Quick 4-in-1 Stage Shortcut */}
+            <button
+              type="button"
+              className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                activePortal === 'presenter'
+                  ? 'bg-purple-600 text-white shadow-xs'
+                  : 'bg-purple-50 text-purple-800 hover:bg-purple-100'
+              }`}
+              onClick={() => onSelectPortal('presenter')}
+              title="4-in-1 Live Presentation Stage"
+            >
+              <span>🎭</span>
+              <span>4-in-1 Stage</span>
+            </button>
+          </nav>
+
+          {/* Right Action: Language Switcher & Get Started CTA */}
+          <div className="flex items-center gap-3">
+            
+            {/* Language Switcher */}
+            <div className="hidden sm:flex items-center bg-slate-100 p-0.5 rounded-full text-xs font-bold">
+              {languages.map((item) => (
+                <button
+                  key={item.code}
+                  type="button"
+                  onClick={() => setLang(item.code)}
+                  className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                    lang === item.code
+                      ? 'bg-white text-slate-900 shadow-xs'
+                      : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                  title={item.label}
+                >
+                  {item.short}
+                </button>
+              ))}
+            </div>
+
+            {/* "Get Started" Button (Exact Match to Screenshot) */}
+            <button
+              type="button"
+              onClick={onOpenGetStarted}
+              className="ktk-btn-get-started"
+            >
+              Get Started
+            </button>
+          </div>
+
         </div>
-
-        {/* Desktop / Tablet Portal Switcher Segment */}
-        <nav className="portal-switcher-nav desktop-switcher" aria-label="Portal Navigation">
-          <button
-            className={`portal-nav-btn buyer ${activePortal === 'buyer' ? 'active' : ''}`}
-            onClick={() => onSelectPortal('buyer')}
-          >
-            <span className="p-icon">🛒</span>
-            <span className="p-label">{t('buyer')}</span>
-            {pendingBuyerPaymentsCount > 0 && (
-              <span className="p-alert-badge urgent">{pendingBuyerPaymentsCount} {t('toPay')}</span>
-            )}
-          </button>
-
-          <button
-            className={`portal-nav-btn seller ${activePortal === 'seller' ? 'active' : ''}`}
-            onClick={() => onSelectPortal('seller')}
-          >
-            <span className="p-icon">📦</span>
-            <span className="p-label">{t('seller')}</span>
-            {pendingRequestsCount > 0 && (
-              <span className="p-alert-badge">{pendingRequestsCount}</span>
-            )}
-          </button>
-
-          <button
-            className={`portal-nav-btn agent ${activePortal === 'agent' ? 'active' : ''}`}
-            onClick={() => onSelectPortal('agent')}
-          >
-            <span className="p-icon">🚚</span>
-            <span className="p-label">{t('fleet')}</span>
-            {availablePickupsCount > 0 && (
-              <span className="p-alert-badge agent-badge">{availablePickupsCount}</span>
-            )}
-          </button>
-
-          <button
-            className={`portal-nav-btn admin ${activePortal === 'admin' ? 'active' : ''}`}
-            onClick={() => onSelectPortal('admin')}
-          >
-            <span className="p-icon">⚙️</span>
-            <span className="p-label">{t('ops')}</span>
-          </button>
-
-          <div className="nav-divider" />
-
-          <button
-            className={`portal-nav-btn presenter-btn ${activePortal === 'presenter' ? 'active' : ''}`}
-            onClick={() => onSelectPortal('presenter')}
-            title="4-in-1 Live Simultaneous Stage"
-          >
-            <span className="p-icon">🎭</span>
-            <span className="p-label">{t('stage4in1')}</span>
-            <span className="live-sparkle" />
-          </button>
-        </nav>
       </header>
 
-      {/* Mobile Floating Glassmorphic Bottom Navigation Dock */}
-      <nav className="mobile-bottom-dock" aria-label="Mobile Bottom Navigation">
+      {/* Mobile Floating Bottom Dock (hidden on desktop) */}
+      <nav className="ktk-mobile-dock fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-24px)] max-w-md bg-white/95 backdrop-blur-md border border-slate-200 rounded-full shadow-2xl p-1.5 grid grid-cols-5 gap-1">
         <button
-          className={`dock-btn ${activePortal === 'buyer' ? 'active' : ''}`}
+          type="button"
+          onClick={() => onSelectPortal('home')}
+          className={`py-2 rounded-full flex flex-col items-center justify-center text-[10px] font-bold ${
+            activePortal === 'home' ? 'bg-[#0a3d24] text-white' : 'text-slate-600'
+          }`}
+        >
+          <span className="text-base leading-none">🏠</span>
+          <span>Home</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => onSelectPortal('buyer')}
+          className={`py-2 rounded-full flex flex-col items-center justify-center text-[10px] font-bold ${
+            activePortal === 'buyer' ? 'bg-[#0a3d24] text-white' : 'text-slate-600'
+          }`}
         >
-          <div className="dock-icon-wrap">
-            <span className="dock-icon">🛒</span>
-            {pendingBuyerPaymentsCount > 0 && (
-              <span className="dock-dot urgent" />
-            )}
-          </div>
-          <span className="dock-label">{t('buyer')}</span>
+          <span className="text-base leading-none">🔍</span>
+          <span>Browse</span>
         </button>
 
         <button
-          className={`dock-btn ${activePortal === 'seller' ? 'active' : ''}`}
+          type="button"
           onClick={() => onSelectPortal('seller')}
+          className={`py-2 rounded-full flex flex-col items-center justify-center text-[10px] font-bold ${
+            activePortal === 'seller' ? 'bg-[#0a3d24] text-white' : 'text-slate-600'
+          }`}
         >
-          <div className="dock-icon-wrap">
-            <span className="dock-icon">📦</span>
-            {pendingRequestsCount > 0 && (
-              <span className="dock-badge">{pendingRequestsCount}</span>
-            )}
-          </div>
-          <span className="dock-label">{t('seller')}</span>
+          <span className="text-base leading-none">📦</span>
+          <span>Sell</span>
         </button>
 
         <button
-          className={`dock-btn ${activePortal === 'agent' ? 'active' : ''}`}
+          type="button"
           onClick={() => onSelectPortal('agent')}
+          className={`py-2 rounded-full flex flex-col items-center justify-center text-[10px] font-bold ${
+            activePortal === 'agent' ? 'bg-[#0a3d24] text-white' : 'text-slate-600'
+          }`}
         >
-          <div className="dock-icon-wrap">
-            <span className="dock-icon">🚚</span>
-            {availablePickupsCount > 0 && (
-              <span className="dock-badge agent">{availablePickupsCount}</span>
-            )}
-          </div>
-          <span className="dock-label">{t('fleet')}</span>
+          <span className="text-base leading-none">🚚</span>
+          <span>Fleet</span>
         </button>
 
         <button
-          className={`dock-btn ${activePortal === 'admin' ? 'active' : ''}`}
-          onClick={() => onSelectPortal('admin')}
-        >
-          <div className="dock-icon-wrap">
-            <span className="dock-icon">⚙️</span>
-          </div>
-          <span className="dock-label">{t('ops')}</span>
-        </button>
-
-        <button
-          className={`dock-btn presenter-dock-btn ${activePortal === 'presenter' ? 'active' : ''}`}
+          type="button"
           onClick={() => onSelectPortal('presenter')}
+          className={`py-2 rounded-full flex flex-col items-center justify-center text-[10px] font-bold ${
+            activePortal === 'presenter' ? 'bg-purple-600 text-white' : 'text-purple-700'
+          }`}
         >
-          <div className="dock-icon-wrap">
-            <span className="dock-icon">🎭</span>
-            <span className="dock-sparkle" />
-          </div>
-          <span className="dock-label">{t('stage4in1')}</span>
+          <span className="text-base leading-none">🎭</span>
+          <span>Stage</span>
         </button>
       </nav>
     </>
   );
 }
+
+export default PortalHeader;

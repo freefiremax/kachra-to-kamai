@@ -103,11 +103,11 @@ export function DatabaseModal({ onClose, onConfigSaved, listingsCount, ordersCou
             )}
 
             <div className="db-actions-row">
-              <button type="submit" className="button button-primary glow-green">
+              <button type="submit" className="ktk-hero-btn-primary">
                 <span>Connect & Save Database</span>
               </button>
               {(url || key) && (
-                <button type="button" className="button button-ghost glass-btn" onClick={handleReset}>
+                <button type="button" className="ktk-hero-btn-secondary" onClick={handleReset}>
                   Clear Credentials
                 </button>
               )}

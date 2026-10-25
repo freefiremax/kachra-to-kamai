@@ -150,10 +150,11 @@ export function PaymentModal({ order, onClose, onSuccess }) {
               </div>
             )}
 
-            <div className="payment-actions">
+            <div className="payment-actions" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <button
                 type="button"
-                className="button button-primary full-width pay-cta-btn glow-cta"
+                className="ktk-hero-btn-primary"
+                style={{ width: '100%', justifyContent: 'center' }}
                 onClick={handlePay}
                 disabled={processing}
               >
@@ -168,7 +169,13 @@ export function PaymentModal({ order, onClose, onSuccess }) {
                   </>
                 )}
               </button>
-              <button type="button" className="button button-ghost full-width" onClick={onClose} disabled={processing}>
+              <button
+                type="button"
+                className="ktk-hero-btn-secondary"
+                style={{ width: '100%', justifyContent: 'center' }}
+                onClick={onClose}
+                disabled={processing}
+              >
                 Cancel
               </button>
             </div>

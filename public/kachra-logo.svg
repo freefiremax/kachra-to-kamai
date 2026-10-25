@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 68" fill="none">
+  <!-- Sprout leaves icon -->
+  <g transform="translate(4, 6)">
+    <!-- Left Leaf -->
+    <path d="M14 26 C10 14, 18 6, 28 2 C29 12, 23 23, 14 26 Z" fill="#22c55e" />
+    <path d="M15 25 C18 17, 23 11, 27 3" stroke="#15803d" stroke-width="1.2" stroke-linecap="round"/>
+    
+    <!-- Right Leaf -->
+    <path d="M22 25 C24 12, 34 5, 46 4 C45 16, 36 24, 22 25 Z" fill="#16a34a" />
+    <path d="M24 24 C31 16, 38 11, 45 5" stroke="#14532d" stroke-width="1.2" stroke-linecap="round"/>
+    
+    <!-- Small Leaf Bud -->
+    <path d="M12 28 C8 24, 8 18, 12 14 C15 19, 15 25, 12 28 Z" fill="#4ade80" />
+    <!-- Stem Base -->
+    <path d="M12 28 C16 30, 21 30, 24 25" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Typography -->
+  <g transform="translate(56, 12)">
+    <!-- Kachra -->
+    <text x="0" y="24" font-family="'DM Sans', 'Space Grotesk', system-ui, -apple-system, sans-serif" font-size="22" font-weight="800" fill="#0f3d24" letter-spacing="-0.5">Kachra</text>
+    
+    <!-- To -->
+    <text x="76" y="24" font-family="'DM Sans', 'Space Grotesk', system-ui, -apple-system, sans-serif" font-size="20" font-weight="700" fill="#15803d">To</text>
+    
+    <!-- Kamai -->
+    <text x="105" y="24" font-family="'DM Sans', 'Space Grotesk', system-ui, -apple-system, sans-serif" font-size="22" font-weight="800" fill="#e67e22" letter-spacing="-0.5">Kamai</text>
+    
+    <!-- Subtitle: Turn Waste Into Worth -->
+    <text x="2" y="38" font-family="'DM Sans', system-ui, -apple-system, sans-serif" font-size="9.5" font-weight="600" fill="#047857" letter-spacing="0.2">Turn Waste Into Worth</text>
+  </g>
+</svg>

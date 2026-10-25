@@ -44,14 +44,13 @@ export function PresenterPage({
             <span>{t('presenterLiveDemo')}</span>
           </div>
           <h1>
-            {t('presenterTitle')} <span className="gradient-text">{t('liveDemoHighlight', 'Live Demonstration')}</span>
+            {t('presenterTitle')} <span className="ktk-headline-orange">Turn Waste Into Worth</span>
           </h1>
           <p>{t('presenterSub')}</p>
         </div>
 
         <div className="presenter-banner-right">
-          <button className="button button-primary quick-sim-btn glass-btn" onClick={onGenerateQuickDemoOrder}>
-            <span className="btn-glow" />
+          <button className="ktk-hero-btn-primary" onClick={onGenerateQuickDemoOrder}>
             <span>{t('generateDemoRequest')}</span>
           </button>
         </div>

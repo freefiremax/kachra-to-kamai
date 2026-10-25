@@ -157,11 +157,11 @@ export function NewListingModal({ onClose, onAddListing }) {
             </label>
           </div>
 
-          <div className="modal-actions-bar">
-            <button type="button" className="button button-ghost glass-btn" onClick={onClose}>
+          <div className="modal-actions-bar" style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '20px' }}>
+            <button type="button" className="ktk-hero-btn-secondary" onClick={onClose}>
               Cancel
             </button>
-            <button type="submit" className="button button-primary glow-amber">
+            <button type="submit" className="ktk-hero-btn-primary">
               Publish Listing ➔
             </button>
           </div>

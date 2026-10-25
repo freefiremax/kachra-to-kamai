@@ -27,153 +27,212 @@ export function AgentPage({
   );
 
   return (
-    <div className="portal-page agent-portal">
-      {/* Agent Banner */}
-      <section className="portal-banner agent-theme glass-card">
-        <div className="portal-banner-content">
-          <div className="portal-tag">
-            <span className="portal-dot blue" />
-            <span>{t('fleetTag')}</span>
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fadeIn">
+      {/* -------------------------------------------------------------
+          1. FLEET HERO BANNER
+         ------------------------------------------------------------- */}
+      <section className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-6 sm:p-10 mb-8 relative overflow-hidden bg-gradient-to-b from-[#f8fbff] via-white to-white">
+        <div className="relative z-10">
+          {/* Cluster & Role Pill */}
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200/70 text-blue-800 text-xs font-bold mb-4">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+            <span>DELIVERY FLEET PORTAL · SAARTHI RIDER HUB</span>
           </div>
-          <h1>
-            {t('fleetPortalTitle')} <span className="gradient-text-blue">{t('transitAndLogistics', 'transit & logistics network')}</span>
-          </h1>
-          <p>{t('fleetPortalSub')}</p>
-          <div className="portal-metrics-row">
-            <div className={`p-metric glass-panel ${availableOrders.length > 0 ? 'urgent-metric pulse-subtle' : ''}`}>
-              <strong>{availableOrders.length}</strong>
-              <span>{t('availablePickups')}</span>
-            </div>
-            <div className="p-metric glass-panel">
-              <strong>{inProgressOrders.length}</strong>
-              <span>{t('activeRuns')}</span>
-            </div>
-            <div className="p-metric glass-panel highlight-metric">
-              <strong className="gradient-text-blue">{money.format(totalAgentEarnings)}</strong>
-              <span>{t('tripPayouts')}</span>
-            </div>
-            <div className="p-metric glass-panel">
-              <strong>{completedOrders.length}</strong>
-              <span>{t('deliveredLoads')}</span>
-            </div>
-          </div>
-        </div>
 
-        {/* Subnav */}
-        <div className="portal-subnav glass-pills">
-          <button
-            className={`subnav-btn ${activeTab === 'available' ? 'active' : ''}`}
-            onClick={() => setActiveTab('available')}
-          >
-            <span className="btn-icon">⚡</span>
-            <span>{t('availableForPickup')}</span>
-            {availableOrders.length > 0 ? (
-              <span className="badge-pill urgent-pulse">{availableOrders.length}</span>
-            ) : (
-              <span className="badge-pill">0</span>
-            )}
-          </button>
-          <button
-            className={`subnav-btn ${activeTab === 'active' ? 'active' : ''}`}
-            onClick={() => setActiveTab('active')}
-          >
-            <span className="btn-icon">🚚</span>
-            <span>{t('activeDeliveries')}</span>
-            <span className="badge-pill">{inProgressOrders.length}</span>
-          </button>
-          <button
-            className={`subnav-btn ${activeTab === 'completed' ? 'active' : ''}`}
-            onClick={() => setActiveTab('completed')}
-          >
-            <span className="btn-icon">✓</span>
-            <span>{t('completedJobs')}</span>
-            <span className="badge-pill">{completedOrders.length}</span>
-          </button>
+          {/* Heading */}
+          <h1 className="text-3xl sm:text-5xl font-black text-[#0a3d24] tracking-tight leading-tight mb-3">
+            Point-to-Point Material Transit · <span className="text-[#e67e22]">Turn Waste Into Worth</span>
+          </h1>
+
+          <p className="text-slate-600 text-sm sm:text-base max-w-2xl leading-relaxed mb-6">
+            Pick up verified industrial batches and crop residues from sellers in Kopargaon, navigate optimized direct routes, and earn guaranteed per-trip payouts.
+          </p>
+
+          {/* Key Metrics Row */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8 max-w-3xl">
+            <div className={`p-4 rounded-2xl bg-white border shadow-xs ${availableOrders.length > 0 ? 'border-blue-400 ring-2 ring-blue-400/20' : 'border-slate-200/80'}`}>
+              <div className="text-2xl sm:text-3xl font-black text-blue-700">
+                {availableOrders.length > 0 ? `⚡ ${availableOrders.length}` : '0'}
+              </div>
+              <div className="text-xs font-bold text-slate-700 mt-1">Available Pickups</div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+              <div className="text-2xl sm:text-3xl font-black text-slate-800">{inProgressOrders.length}</div>
+              <div className="text-xs font-semibold text-slate-500 mt-1">Active Runs</div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200/70 shadow-xs">
+              <div className="text-2xl sm:text-3xl font-black text-[#0a3d24]">{money.format(totalAgentEarnings)}</div>
+              <div className="text-xs font-bold text-emerald-800 mt-1">Trip Kamai Earned</div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs">
+              <div className="text-2xl sm:text-3xl font-black text-slate-800">{completedOrders.length}</div>
+              <div className="text-xs font-semibold text-slate-500 mt-1">Delivered Loads</div>
+            </div>
+          </div>
+
+          {/* Tab Switcher Pills */}
+          <div className="inline-flex p-1.5 rounded-full bg-slate-100 border border-slate-200/80">
+            <button
+              type="button"
+              onClick={() => setActiveTab('available')}
+              className={`px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                activeTab === 'available'
+                  ? 'bg-[#0a3d24] text-white shadow-md'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <span>⚡</span>
+              <span>Available Pickups</span>
+              {availableOrders.length > 0 ? (
+                <span className="px-2 py-0.5 rounded-full text-[11px] bg-blue-500 text-white animate-pulse">
+                  {availableOrders.length}
+                </span>
+              ) : (
+                <span className="px-2 py-0.5 rounded-full text-[11px] bg-slate-200 text-slate-700">0</span>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('active')}
+              className={`px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                activeTab === 'active'
+                  ? 'bg-[#0a3d24] text-white shadow-md'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <span>🚚</span>
+              <span>Active Deliveries</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] ${activeTab === 'active' ? 'bg-emerald-800 text-white' : 'bg-slate-200 text-slate-700'}`}>
+                {inProgressOrders.length}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('completed')}
+              className={`px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                activeTab === 'completed'
+                  ? 'bg-[#0a3d24] text-white shadow-md'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <span>✓</span>
+              <span>Completed Jobs</span>
+              <span className={`px-2 py-0.5 rounded-full text-[11px] ${activeTab === 'completed' ? 'bg-emerald-800 text-white' : 'bg-slate-200 text-slate-700'}`}>
+                {completedOrders.length}
+              </span>
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* Main Tab Views */}
+      {/* -------------------------------------------------------------
+          2. TAB 1: AVAILABLE PICKUPS
+         ------------------------------------------------------------- */}
       {activeTab === 'available' && (
-        <div className="agent-available-view">
-          <div className="section-header-box">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h2>Available Paid Consignments Ready for Transit</h2>
-              <p>Step 4 of process: Buyer has paid. Consignment is ready at seller location for driver pickup.</p>
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+                Available Paid Consignments Ready for Transit
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500">
+                Step 3 of value cycle: Buyer has paid into escrow. Accept consignment to load and drive.
+              </p>
             </div>
-            {availableOrders.length === 0 && onViewBuyerPortal && (
-              <button className="button button-ghost small glass-btn" onClick={onViewBuyerPortal}>
-                Check Buyer/Seller to generate paid order ➔
+            {onViewBuyerPortal && (
+              <button
+                type="button"
+                onClick={onViewBuyerPortal}
+                className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+              >
+                Simulate Buyer Order ➔
               </button>
             )}
           </div>
 
           {availableOrders.length === 0 ? (
-            <div className="portal-empty-card glass-card">
-              <span className="empty-emoji">🚚</span>
-              <h3>No consignments currently awaiting pickup</h3>
-              <p>
-                As soon as a buyer completes payment for an accepted order, it will appear here for immediate fleet assignment.
+            <div className="bg-white p-12 rounded-3xl border border-slate-200 text-center">
+              <span className="text-4xl">🚚</span>
+              <h3 className="text-lg font-bold text-slate-800 mt-2">No pickups waiting right now</h3>
+              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                Once a seller accepts a buy request and the buyer completes payment, consignments will appear here for driver assignment.
               </p>
-              <div className="empty-note glass-panel">
-                💡 <em>Flow reminder: Buyer requests ➔ Seller accepts ➔ Buyer clicks Pay ➔ Consignment appears here!</em>
-              </div>
             </div>
           ) : (
-            <div className="agent-jobs-grid">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {availableOrders.map((order) => (
-                <div key={order.id} className="agent-job-card glass-card glow-blue-panel">
-                  <div className="job-header">
-                    <div className="job-badge-row">
-                      <span className="job-badge glass-pill">READY FOR PICKUP</span>
-                      <span className="job-id">Order #{order.id}</span>
-                    </div>
-                    <div className="job-payout glass-panel">
-                      <small>{t('yourPayout')}</small>
-                      <strong className="gradient-text-emerald">+{money.format(order.deliveryFee)}</strong>
-                    </div>
-                  </div>
-
-                  <h3 className="job-title">{order.listingTitle}</h3>
-
-                  <div className="job-route-box glass-panel">
-                    <div className="route-point">
-                      <span className="dot dot-green" />
-                      <div>
-                        <small>{t('pickupPoint')}</small>
-                        <strong>{order.seller}</strong>
+                <div
+                  key={order.id}
+                  className="bg-white rounded-3xl border-2 border-blue-200/90 hover:border-blue-500 p-6 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Header */}
+                    <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-900">
+                          Ready For Pickup
+                        </span>
+                        <span className="text-xs font-mono font-bold text-slate-400">
+                          #{order.id}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs font-semibold text-slate-400">Your Payout: </span>
+                        <span className="text-lg font-black text-emerald-700">+{money.format(order.deliveryFee || 40)}</span>
                       </div>
                     </div>
-                    <div className="route-line">
-                      <span className="route-dist">📍 {order.distanceKm} km direct transit</span>
-                    </div>
-                    <div className="route-point">
-                      <span className="dot dot-yellow" />
-                      <div>
-                        <small>{t('dropPoint')}</small>
-                        <strong>{order.destination}</strong>
+
+                    <h3 className="text-xl font-bold text-slate-900 mb-4">
+                      {order.listingTitle}
+                    </h3>
+
+                    {/* Point to Point Route Visualizer */}
+                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-3 mb-5">
+                      <div className="flex items-start gap-3">
+                        <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1 flex-shrink-0" />
+                        <div>
+                          <div className="text-[10px] uppercase font-bold text-slate-400">Pickup Hub (Seller)</div>
+                          <div className="text-xs font-bold text-slate-800">{order.seller}</div>
+                        </div>
+                      </div>
+
+                      <div className="ml-1 pl-3 border-l-2 border-dashed border-slate-300 text-[11px] text-blue-700 font-semibold py-0.5">
+                        📍 {order.distanceKm || 5} km direct transit in Kopargaon cluster
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#e67e22] mt-1 flex-shrink-0" />
+                        <div>
+                          <div className="text-[10px] uppercase font-bold text-slate-400">Drop Point (Buyer Destination)</div>
+                          <div className="text-xs font-bold text-slate-800">{order.destination}</div>
+                        </div>
                       </div>
                     </div>
+
+                    {/* Consignment Specs */}
+                    <div className="flex items-center gap-2 text-xs text-slate-600 mb-5 flex-wrap">
+                      <span className="px-3 py-1 rounded-full bg-slate-100 font-semibold">
+                        Load: {order.quantity} {order.unit}
+                      </span>
+                      <span className="px-3 py-1 rounded-full bg-slate-100 font-semibold">
+                        Vehicle: Mini-Truck / Tempo
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="job-meta-chips">
-                    <span className="chip glass-pill">Load: {order.quantity} {order.unit}</span>
-                    <span className="chip glass-pill">Weight: ~{order.quantity} kg</span>
-                    <span className="chip glass-pill">Vehicle: Mini-Truck</span>
-                  </div>
-
-                  <div className="job-action-row">
-                    <button
-                      className="button button-primary accept-job-btn glow-blue"
-                      onClick={() => {
-                        onAcceptDelivery(order.id);
-                        setActiveTab('active');
-                      }}
-                    >
-                      <span className="truck-icon">🚚</span>
-                      <span>{t('acceptDelivery')}</span>
-                      <span className="arr">➔</span>
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onAcceptDelivery(order.id)}
+                    className="w-full py-3 rounded-full bg-[#0a3d24] hover:bg-[#062c19] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <span>🚚 Accept Delivery Consignment</span>
+                    <span>➔</span>
+                  </button>
                 </div>
               ))}
             </div>
@@ -181,90 +240,66 @@ export function AgentPage({
         </div>
       )}
 
-      {/* Active Tab */}
+      {/* -------------------------------------------------------------
+          3. TAB 2: ACTIVE DELIVERIES
+         ------------------------------------------------------------- */}
       {activeTab === 'active' && (
-        <div className="agent-active-view">
-          <div className="section-header-box">
-            <div>
-              <h2>Your Active Transit Consignments</h2>
-              <p>Log pickup from seller hub and confirm arrival at buyer destination.</p>
-            </div>
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+              Active Runs in Progress
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500">
+              Consignments currently assigned to you for loading, transit, and doorstep drop-off.
+            </p>
           </div>
 
           {inProgressOrders.length === 0 ? (
-            <div className="portal-empty-card glass-card">
-              <span className="empty-emoji">📦</span>
-              <h3>No active transit runs right now</h3>
-              <p>Switch to "Available for Pickup" to claim a delivery assignment.</p>
-              <button className="button button-primary glow-blue" onClick={() => setActiveTab('available')}>
-                View Available Pickups
-              </button>
+            <div className="bg-white p-12 rounded-3xl border border-slate-200 text-center">
+              <span className="text-4xl">🚚</span>
+              <h3 className="text-lg font-bold text-slate-800 mt-2">No active delivery runs right now</h3>
+              <p className="text-xs text-slate-500 mt-1">Accept a paid pickup consignment from the Available tab to start a run.</p>
             </div>
           ) : (
-            <div className="agent-active-list">
+            <div className="space-y-4">
               {inProgressOrders.map((order) => (
-                <div key={order.id} className="active-consignment-card glass-card">
-                  <div className="consign-head">
-                    <div>
-                      <span className="consign-tag glass-pill">ACTIVE CONSIGNMENT</span>
-                      <h3>{order.listingTitle} ({order.quantity} {order.unit})</h3>
-                      <p>Order #{order.id} · Payout: <strong>{money.format(order.deliveryFee)}</strong></p>
+                <div
+                  key={order.id}
+                  className="bg-white rounded-3xl border-2 border-emerald-500/70 p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                >
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono font-bold text-slate-400">ORDER #{order.id}</span>
+                      <span className="text-xs text-slate-300">·</span>
+                      <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+                        {order.status === 'agent_assigned' ? '🚚 En Route to Seller' : '📦 In Transit to Destination'}
+                      </span>
                     </div>
-                    <div className="consign-state-badge">
-                      {order.status === 'agent_assigned' && (
-                        <span className="status-badge assigned">En Route to Pickup Hub</span>
-                      )}
-                      {order.status === 'picked_up' && (
-                        <span className="status-badge transit">Loaded & In Transit to Buyer</span>
-                      )}
-                    </div>
+
+                    <h3 className="text-xl font-black text-slate-900 mt-1">{order.listingTitle}</h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Pickup from {order.seller} ➔ Drop at {order.destination} ({order.quantity} {order.unit})
+                    </p>
                   </div>
 
-                  <div className="transit-steps-bar">
-                    <div className={`t-step glass-panel ${order.status === 'agent_assigned' || order.status === 'picked_up' ? 'done' : ''}`}>
-                      <span className="t-icon">1</span>
-                      <div className="t-text">
-                        <strong>Dispatch Assigned</strong>
-                        <small>Ready for route</small>
-                      </div>
-                    </div>
-                    <div className={`t-step glass-panel ${order.status === 'picked_up' ? 'done' : ''}`}>
-                      <span className="t-icon">2</span>
-                      <div className="t-text">
-                        <strong>Pickup from Seller</strong>
-                        <small>{order.seller}</small>
-                      </div>
-                    </div>
-                    <div className="t-step glass-panel">
-                      <span className="t-icon">3</span>
-                      <div className="t-text">
-                        <strong>Drop at Buyer Destination</strong>
-                        <small>{order.destination}</small>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="consign-actions">
+                  <div className="flex items-center gap-3">
                     {order.status === 'agent_assigned' && (
                       <button
-                        className="button button-primary pickup-btn glow-blue"
+                        type="button"
                         onClick={() => onPickUp(order.id)}
+                        className="px-6 py-3 rounded-full bg-[#0a3d24] hover:bg-[#062c19] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all cursor-pointer"
                       >
-                        <span>📦 {t('confirmPickup')}</span>
-                        <span className="arr">➔</span>
+                        📦 Confirm Material Loaded at Seller ➔
                       </button>
                     )}
 
                     {order.status === 'picked_up' && (
                       <button
-                        className="button button-primary deliver-btn glow-green"
-                        onClick={() => {
-                          onDeliver(order.id);
-                          setActiveTab('completed');
-                        }}
+                        type="button"
+                        onClick={() => onDeliver(order.id)}
+                        className="px-6 py-3 rounded-full bg-[#0a3d24] hover:bg-[#062c19] text-white text-xs font-bold shadow-md hover:shadow-lg transition-all cursor-pointer"
                       >
-                        <span>✅ {t('confirmDrop')}</span>
-                        <span className="arr">➔</span>
+                        ✓ Confirm Delivery at Buyer Doorstep ➔
                       </button>
                     )}
                   </div>
@@ -275,41 +310,43 @@ export function AgentPage({
         </div>
       )}
 
-      {/* Completed Tab */}
+      {/* -------------------------------------------------------------
+          4. TAB 3: COMPLETED JOBS
+         ------------------------------------------------------------- */}
       {activeTab === 'completed' && (
-        <div className="agent-completed-view">
-          <div className="section-header-box">
-            <div>
-              <h2>Delivered Consignments & Payout Ledger</h2>
-              <p>Point-to-point routes successfully executed in Kopargaon region.</p>
-            </div>
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+              Delivered Consignments & Settled Earnings
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500">
+              Your historical log of completed runs and doorstep freight settlements.
+            </p>
           </div>
 
           {completedOrders.length === 0 ? (
-            <div className="portal-empty-card glass-card">
-              <span className="empty-emoji">📜</span>
-              <h3>No completed delivery runs yet</h3>
-              <p>Complete your active deliveries to build your transit history and earnings log.</p>
+            <div className="bg-white p-12 rounded-3xl border border-slate-200 text-center">
+              <span className="text-4xl">📦</span>
+              <h3 className="text-lg font-bold text-slate-800 mt-2">No completed deliveries yet</h3>
+              <p className="text-xs text-slate-500 mt-1">Deliver consignments to build your delivery earnings history.</p>
             </div>
           ) : (
-            <div className="agent-completed-table">
+            <div className="space-y-3">
               {completedOrders.map((order) => (
-                <div key={order.id} className="completed-job-row glass-card">
-                  <div className="comp-left">
-                    <span className="comp-check">✓</span>
-                    <div>
-                      <strong>{order.listingTitle} ({order.quantity} {order.unit})</strong>
-                      <p>
-                        {order.seller} ➔ {order.destination} ({order.distanceKm} km)
-                      </p>
-                    </div>
+                <div
+                  key={order.id}
+                  className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-xs flex items-center justify-between"
+                >
+                  <div>
+                    <div className="text-xs font-mono font-bold text-slate-400">CONSIGNMENT #{order.id}</div>
+                    <div className="font-bold text-slate-900 mt-0.5">{order.listingTitle}</div>
+                    <div className="text-xs text-slate-500">{order.seller} ➔ {order.destination}</div>
                   </div>
-                  <div className="comp-right">
-                    <div className="payout-amount glass-panel">
-                      <small>Trip Payout</small>
-                      <strong className="gradient-text-emerald">+{money.format(order.deliveryFee)}</strong>
+                  <div className="text-right">
+                    <div className="text-xs font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full inline-block mb-1">
+                      Settled
                     </div>
-                    <span className="comp-status-chip glass-pill">Delivered</span>
+                    <div className="text-base font-black text-[#0a3d24]">+{money.format(order.deliveryFee || 40)}</div>
                   </div>
                 </div>
               ))}
@@ -320,3 +357,5 @@ export function AgentPage({
     </div>
   );
 }
+
+export default AgentPage;

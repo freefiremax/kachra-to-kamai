@@ -1,7 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..700&family=Space+Grotesk:wght@500;600;700&display=swap');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* -------------------------------------------------------------
    ROOT & DESIGN SYSTEM TOKENS
@@ -3045,38 +3043,45 @@ textarea:focus-visible {
 }
 
 .portal-banner {
-  border-radius: 24px;
-  padding: 30px 34px;
-  margin-bottom: 24px;
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 28px;
+  padding: 36px 40px;
+  margin-bottom: 28px;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 .portal-banner.buyer-theme {
-  border-left: 6px solid #10b981;
+  border-left: 6px solid #0a3d24;
 }
 
 .portal-banner.seller-theme {
-  border-left: 6px solid #f59e0b;
+  border-left: 6px solid #e67e22;
 }
 
 .portal-banner.agent-theme {
-  border-left: 6px solid #3b82f6;
+  border-left: 6px solid #0284c7;
 }
 
 .portal-banner.admin-theme {
-  border-left: 6px solid #8b5cf6;
+  border-left: 6px solid #7c3aed;
 }
 
 .portal-tag {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #475569;
-  margin-bottom: 10px;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  background: #ecfdf5;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #065f46;
+  margin-bottom: 12px;
 }
 
 .portal-dot {
@@ -3090,56 +3095,69 @@ textarea:focus-visible {
 .portal-dot.purple { background: #8b5cf6; }
 
 .portal-banner h1 {
-  font-family: var(--font-heading);
-  font-size: clamp(22px, 3.8vw, 32px);
-  font-weight: 800;
-  color: var(--text-main);
-  line-height: 1.25;
-  margin-bottom: 8px;
+  font-family: var(--font-sans);
+  font-size: clamp(26px, 4vw, 40px);
+  font-weight: 900;
+  color: #0a3d24;
+  line-height: 1.15;
+  letter-spacing: -1px;
+  margin-bottom: 10px;
 }
 
 .portal-banner p {
-  max-width: 720px;
-  font-size: 14px;
+  max-width: 740px;
+  font-size: 15px;
   color: #475569;
-  line-height: 1.5;
-  margin-bottom: 20px;
+  line-height: 1.6;
+  margin-bottom: 24px;
 }
 
 .portal-metrics-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 14px;
 }
 
 .p-metric {
-  padding: 12px 18px;
-  border-radius: 16px;
+  padding: 14px 22px;
+  border-radius: 18px;
   display: flex;
   flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
+}
+
+.p-metric:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(10, 61, 36, 0.06);
 }
 
 .p-metric strong {
-  font-size: 22px;
-  font-family: var(--font-heading);
-  color: var(--text-main);
+  font-size: 26px;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  color: #0a3d24;
   line-height: 1.1;
 }
 
 .p-metric span {
-  font-size: 11px;
-  color: var(--text-muted);
+  font-size: 12px;
+  color: #64748b;
   font-weight: 600;
-  margin-top: 3px;
+  margin-top: 4px;
 }
 
 .p-metric.highlight-metric {
-  border: 1.5px solid rgba(245, 158, 11, 0.6);
+  border: 1.5px solid rgba(230, 126, 34, 0.4);
+  background: #fffdfa;
   cursor: pointer;
 }
 
 .p-metric.urgent-metric {
-  border: 1.5px solid rgba(239, 68, 68, 0.6);
+  border: 1.5px solid rgba(239, 68, 68, 0.5);
+  background: #fffafb;
 }
 
 .pulse-subtle {
@@ -3162,31 +3180,34 @@ textarea:focus-visible {
 }
 
 .portal-subnav {
-  display: flex;
-  gap: 6px;
-  padding: 4px;
-  border-radius: 14px;
-  margin-top: 16px;
+  display: inline-flex;
+  gap: 4px;
+  padding: 5px;
+  border-radius: 9999px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  margin-top: 18px;
 }
 
 .subnav-btn {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 8px 16px;
-  border-radius: 10px;
+  padding: 9px 20px;
+  border-radius: 9999px;
   border: none;
   background: transparent;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 13.5px;
+  font-weight: 700;
   color: #475569;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
+  cursor: pointer;
 }
 
 .subnav-btn.active {
-  background: #ffffff;
-  color: var(--text-main);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: #0a3d24;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(10, 61, 36, 0.22);
 }
 
 .badge-pill {
@@ -3314,54 +3335,71 @@ textarea:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 14px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
   color: #475569;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
   white-space: nowrap;
+  transition: all 0.18s ease;
+  cursor: pointer;
+}
+
+.cat-pill:hover {
+  border-color: #cbd5e1;
+  color: #0a3d24;
+  background: #f8fafc;
 }
 
 .cat-pill.active {
-  background: #0f172a;
+  background: #0a3d24;
   color: #ffffff;
-  border-color: #0f172a;
+  border-color: #0a3d24;
+  box-shadow: 0 4px 14px rgba(10, 61, 36, 0.22);
 }
 
 .portal-listing-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
 }
 
 .portal-listing-card {
-  border-radius: 20px;
-  padding: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 22px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .portal-listing-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 34px -6px rgba(15, 23, 42, 0.08);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(10, 61, 36, 0.09);
+  border-color: rgba(16, 185, 129, 0.4);
 }
 
 .card-top {
   display: flex;
   gap: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .item-icon-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 26px;
   flex-shrink: 0;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
 }
 
 .item-info {
@@ -3369,78 +3407,99 @@ textarea:focus-visible {
 }
 
 .item-cat-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  color: #64748b;
+  color: #065f46;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .item-title {
-  font-family: var(--font-heading);
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 800;
+  color: #0a3d24;
   line-height: 1.25;
-  margin: 2px 0 3px;
+  margin: 3px 0 4px;
 }
 
 .item-location {
-  font-size: 11px;
-  color: var(--text-muted);
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .item-desc {
-  font-size: 12px;
+  font-size: 13px;
   color: #475569;
-  line-height: 1.45;
-  margin-bottom: 12px;
+  line-height: 1.5;
+  margin-bottom: 14px;
   flex: 1;
 }
 
 .item-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 14px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
 .tag-chip {
-  padding: 3px 8px;
-  border-radius: 8px;
-  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11.5px;
   font-weight: 600;
   color: #475569;
+  background: #f1f5f9;
 }
 
 .tag-chip.condition {
   background: #ecfdf5;
   color: #065f46;
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .card-bottom {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  border-top: 1px solid rgba(241, 245, 249, 0.8);
-  padding-top: 12px;
+  gap: 12px;
+  border-top: 1px solid rgba(241, 245, 249, 0.9);
+  padding-top: 14px;
 }
 
 .price-num {
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--text-main);
+  font-size: 20px;
+  font-weight: 900;
+  color: #0a3d24;
 }
 
 .price-unit {
-  font-size: 11px;
-  color: var(--text-muted);
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 600;
 }
 
 .buy-request-btn {
-  padding: 8px 14px;
-  font-size: 12px;
-  border-radius: 10px;
+  background: #0a3d24;
+  color: #ffffff;
+  border: 0;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(10, 61, 36, 0.2);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.buy-request-btn:hover {
+  background: #062c19;
+  box-shadow: 0 6px 18px rgba(10, 61, 36, 0.3);
+  transform: translateY(-1px);
 }
 
 /* Buyer Orders List */
@@ -5000,3 +5059,379 @@ textarea:focus-visible {
   0% { transform: translateY(20px); opacity: 0; }
   100% { transform: translateY(0); opacity: 1; }
 }
+
+/* -------------------------------------------------------------
+   KACHRA TO KAMAI HOME & HERO DESIGN SYSTEM
+------------------------------------------------------------- */
+.portal-home {
+  background: #ffffff !important;
+  min-height: 100vh;
+}
+
+.portal-home .main-portal-header {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+@keyframes bounceSubtle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes bounceSubtleDelay {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-bounce-subtle {
+  animation: bounceSubtle 4s ease-in-out infinite;
+}
+
+.animate-bounce-subtle-delay {
+  animation: bounceSubtleDelay 4.5s ease-in-out 1.5s infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.writing-mode-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* -------------------------------------------------------------
+   EXPLICIT PIXEL-PERFECT STYLING FOR KACHRA TO KAMAI UI
+------------------------------------------------------------- */
+.ktk-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.ktk-header-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.ktk-brand-btn {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  text-align: left;
+}
+
+.ktk-nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.ktk-nav-link {
+  background: transparent;
+  border: 0;
+  padding: 8px 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  border-radius: 9999px;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.ktk-nav-link:hover {
+  color: #0a3d24;
+  background: #f1f5f9;
+}
+
+.ktk-nav-link.active {
+  color: #0a3d24;
+  font-weight: 700;
+  background: #ecfdf5;
+}
+
+.ktk-btn-get-started {
+  background: #0a3d24;
+  color: #ffffff;
+  border: 0;
+  padding: 10px 24px;
+  font-size: 14.5px;
+  font-weight: 700;
+  border-radius: 9999px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(10, 61, 36, 0.22);
+  transition: all 0.2s ease;
+}
+
+.ktk-btn-get-started:hover {
+  background: #062c19;
+  box-shadow: 0 6px 18px rgba(10, 61, 36, 0.32);
+  transform: translateY(-1px);
+}
+
+.ktk-btn-get-started:active {
+  transform: translateY(0);
+}
+
+/* Hero Section */
+.ktk-hero-section {
+  position: relative;
+  background: radial-gradient(circle at 90% 20%, rgba(209, 250, 229, 0.35) 0%, transparent 45%),
+              radial-gradient(circle at 10% 40%, rgba(254, 243, 199, 0.25) 0%, transparent 40%),
+              #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  overflow: hidden;
+  padding: 44px 0 68px 0;
+}
+
+.ktk-hero-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.ktk-hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  align-items: center;
+  gap: 40px;
+}
+
+@media (max-width: 900px) {
+  .ktk-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+}
+
+.ktk-cluster-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  background: #ecfdf5;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #065f46;
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-bottom: 22px;
+}
+
+.ktk-hero-headline {
+  font-size: clamp(38px, 5.5vw, 68px);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -1.5px;
+  margin-bottom: 20px;
+}
+
+.ktk-headline-dark {
+  display: block;
+  color: #0a3d24;
+}
+
+.ktk-headline-orange {
+  display: block;
+  color: #e67e22;
+}
+
+.ktk-hero-sub {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #475569;
+  max-width: 520px;
+  margin-bottom: 32px;
+}
+
+.ktk-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.ktk-hero-btn-primary {
+  background: #0a3d24;
+  color: #ffffff;
+  border: 0;
+  padding: 13px 32px;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(10, 61, 36, 0.22);
+  transition: all 0.2s ease;
+}
+
+.ktk-hero-btn-primary:hover {
+  background: #062c19;
+  box-shadow: 0 10px 28px rgba(10, 61, 36, 0.3);
+  transform: translateY(-2px);
+}
+
+.ktk-hero-btn-secondary {
+  background: #ffffff;
+  color: #0a3d24;
+  border: 1.5px solid #cbd5e1;
+  padding: 13px 32px;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.ktk-hero-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  transform: translateY(-2px);
+}
+
+.ktk-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 480px;
+  padding-top: 24px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.ktk-stat-val {
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.ktk-stat-lbl {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* Hero Right Visual */
+.ktk-hero-right {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ktk-hero-visual-card {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ktk-hero-img {
+  width: 100%;
+  max-height: 460px;
+  object-fit: contain;
+  border-radius: 36px;
+  mask-image: radial-gradient(ellipse 92% 92% at 50% 50%, black 72%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 92% 92% at 50% 50%, black 72%, transparent 100%);
+  filter: drop-shadow(0 20px 45px rgba(10, 61, 36, 0.14));
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ktk-hero-img:hover {
+  transform: scale(1.02);
+}
+
+.ktk-floating-card-1 {
+  position: absolute;
+  top: 12px;
+  left: -8px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  padding: 10px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+}
+
+.ktk-floating-card-2 {
+  position: absolute;
+  bottom: 24px;
+  right: -8px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  padding: 10px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+}
+
+/* Mobile bottom dock styling */
+@media (min-width: 769px) {
+  .ktk-mobile-dock {
+    display: none !important;
+  }
+}
+@media (max-width: 768px) {
+  .ktk-nav-menu {
+    display: none !important;
+  }
+  .ktk-floating-card-1,
+  .ktk-floating-card-2 {
+    display: none !important;
+  }
+}
+
+

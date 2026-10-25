@@ -54,7 +54,7 @@ export function AdminPage({
             <span>{t('opsTag')}</span>
           </div>
           <h1>
-            {t('opsPortalTitle')} <span className="gradient-text-purple">{t('commandCockpit')}</span>
+            {t('opsPortalTitle')} <span className="ktk-headline-orange">Turn Waste Into Worth</span>
           </h1>
           <p>
             Monitor real-time material flows across all four participant types: Buyers, Sellers, Delivery Saarthi Agents, and Regulatory Safety standards.
